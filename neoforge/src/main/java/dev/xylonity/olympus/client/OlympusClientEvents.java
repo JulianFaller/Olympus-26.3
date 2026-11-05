@@ -5,6 +5,7 @@ import dev.xylonity.olympus.client.entity.model.AbsorbedSoulModel;
 import dev.xylonity.olympus.client.entity.model.HarpyProjectileModel;
 import dev.xylonity.olympus.client.entity.renderer.AbsorbedSoulEntityRenderer;
 import dev.xylonity.olympus.client.entity.renderer.HarpyEntityRenderer;
+import dev.xylonity.olympus.client.entity.renderer.CerberusRenderer;
 import dev.xylonity.olympus.client.entity.renderer.HarpyProjectileEntityRenderer;
 import dev.xylonity.olympus.client.entity.renderer.PoseidonTridentEntityRenderer;
 import dev.xylonity.olympus.client.entity.renderer.SpearOfAresEntityRenderer;
@@ -55,6 +56,7 @@ import dev.xylonity.olympus.registry.OlympusMobEffects;
 import dev.xylonity.olympus.registry.OlympusParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.ClientAvatarEntity;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -64,6 +66,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Avatar;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -109,6 +112,7 @@ public final class OlympusClientEvents {
         event.registerEntityRenderer(OlympusEntities.POSEIDON_TRIDENT.get(), PoseidonTridentEntityRenderer::new);
         event.registerEntityRenderer(OlympusEntities.SPEAR_OF_ARES.get(), SpearOfAresEntityRenderer::new);
         event.registerEntityRenderer(OlympusEntities.SUMMONING_SPEARS.get(), SummoningSpearsEntityRenderer::new);
+        event.registerEntityRenderer(OlympusEntities.CERBERUS.get(), CerberusRenderer::new);
         event.registerEntityRenderer(OlympusEntities.HARPY.get(), HarpyEntityRenderer::new);
         event.registerEntityRenderer(OlympusEntities.ELITE_HARPY.get(), context -> new HarpyEntityRenderer(context, true));
         event.registerEntityRenderer(OlympusEntities.HARPY_PROJECTILE.get(), HarpyProjectileEntityRenderer::new);
@@ -190,8 +194,13 @@ public final class OlympusClientEvents {
             @Override
             public <T extends Avatar & ClientAvatarEntity> void accept(final T avatar, final @NonNull AvatarRenderState renderState) {
                 renderState.setRenderData(HadesInvisibilityRenderState.ACTIVE, avatar.hasEffect(OlympusMobEffects.INVISIBILITY_OF_HADES));
+                if (avatar instanceof Player player
+                        && player.isUsingItem()
+                        && player.getUseItem().is(OlympusItems.HADES_BIDENT.get())) {
+                    renderState.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
+                    renderState.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
+                }
             }
-
         });
 
     }

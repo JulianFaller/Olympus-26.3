@@ -2,6 +2,9 @@ package dev.xylonity.olympus.registry;
 
 import dev.xylonity.olympus.Olympus;
 import dev.xylonity.olympus.common.entity.projectile.AbsorbedSoulEntity;
+import dev.xylonity.olympus.common.entity.CerberusEntity;
+import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import dev.xylonity.olympus.common.entity.HarpyEntity;
 import dev.xylonity.olympus.common.entity.projectile.HarpyProjectileEntity;
 import dev.xylonity.olympus.common.entity.projectile.PoseidonTridentEntity;
@@ -15,6 +18,13 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class OlympusEntities {
 
     public static final DeferredRegister.Entities ENTITIES = DeferredRegister.createEntities(Olympus.MOD_ID);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<CerberusEntity>> CERBERUS = ENTITIES.registerEntityType(
+            "cerberus", CerberusEntity::new, MobCategory.CREATURE, builder -> builder.sized(1.2F, 1.4F).clientTrackingRange(10));
+
+    public static void registerAttributes(EntityAttributeCreationEvent event) {
+        event.put(CERBERUS.get(), Wolf.createAttributes().build());
+    }
 
     public static final DeferredHolder<EntityType<?>, EntityType<AbsorbedSoulEntity>> ABSORBED_SOUL = ENTITIES.registerEntityType(
             "absorbed_soul", AbsorbedSoulEntity::new, MobCategory.MISC, builder -> builder.noLootTable().sized(0.1F, 0.1F).clientTrackingRange(6).updateInterval(2));

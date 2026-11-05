@@ -206,8 +206,8 @@ public final class OlympusGameTests {
     }
 
     private static void registeredContent(GameTestHelper h) {
-        near(h, OlympusItems.ITEMS.getEntries().size(), 33, "Item count");
-        near(h, OlympusEntities.ENTITIES.getEntries().size(), 7, "Entity count");
+        near(h, OlympusItems.ITEMS.getEntries().size(), 34, "Item count");
+        near(h, OlympusEntities.ENTITIES.getEntries().size(), 8, "Entity count");
         OlympusItems.ITEMS.getEntries().forEach(entry -> check(h, !entry.get().getDefaultInstance().isEmpty(), "Empty item " + entry.getId()));
         OlympusBlocks.BLOCKS.getEntries().forEach(entry -> check(h, entry.get().defaultBlockState().getBlock() == entry.get(), "Block state " + entry.getId()));
         h.succeed();

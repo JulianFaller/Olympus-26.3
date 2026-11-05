@@ -77,7 +77,7 @@ public final class OlympusClientTests {
             }
             client.getSingleplayerServer().execute(() -> setupScene(client));
         }
-        if (worldTicks > 30 && worldTicks <= 30 + 33 * 8 && (worldTicks - 31) % 8 == 0) {
+        if (worldTicks > 30 && worldTicks <= 30 + 34 * 8 && (worldTicks - 31) % 8 == 0) {
             var entries = new ArrayList<>(OlympusItems.ITEMS.getEntries());
             var item = entries.get(itemIndex++).get();
             client.getSingleplayerServer().execute(() -> {
@@ -87,7 +87,7 @@ public final class OlympusClientTests {
         }
         if (worldTicks == 310) {
             check(frames > 40, "World rendered frames");
-            check(itemIndex == 33, "Cycled all 33 held item models");
+            check(itemIndex == 34, "Cycled all 34 held item models");
             check(CuriosApi.getCuriosInventory(client.player).orElseThrow().isEquipped(OlympusItems.HELMET_OF_HADES.get()), "Curios equipment synchronized");
             client.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
             client.getSingleplayerServer().execute(() -> {

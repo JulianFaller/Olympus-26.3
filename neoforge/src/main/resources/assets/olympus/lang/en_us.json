@@ -1,6 +1,5 @@
 {
   "creativetab.olympus.title": "Olympus",
-
   "item.olympus.bracers_of_zeus": "Bracers of Zeus",
   "item.olympus.bow_of_artemis": "Artemis's Bow",
   "item.olympus.helmet_of_hades": "Helmet of Hades",
@@ -15,16 +14,13 @@
   "item.olympus.harpy_spawn_egg": "Harpy Spawn Egg",
   "item.olympus.elite_harpy_spawn_egg": "Elite Harpy Spawn Egg",
   "item.olympus.parthenon_key": "Parthenon Key",
-
   "entity.olympus.absorbed_soul": "Absorbed Soul",
   "entity.olympus.harpy": "Harpy",
   "entity.olympus.elite_harpy": "Elite Harpy",
-
   "curios.identifier.feet": "Feet",
   "curios.modifiers.feet": "When worn on feet:",
   "curios.identifier.jewelry": "Jewelry",
   "curios.modifiers.jewelry": "When worn as jewelry:",
-
   "block.olympus.pentelic_marble": "Pentelic Marble",
   "block.olympus.pentelic_marble_stairs": "Pentelic Marble Stairs",
   "block.olympus.pentelic_marble_slab": "Pentelic Marble Slab",
@@ -45,10 +41,8 @@
   "block.olympus.air_cloud_block": "Air Cloud Block",
   "block.olympus.parthenon_spawner": "Parthenon Spawner",
   "block.olympus.locked_chest": "Locked Chest",
-
   "effect.olympus.lightning_stun": "Lightning Stun",
   "effect.olympus.invisibility_of_hades": "Invisibility of Hades",
-
   "subtitles.olympus.zeus_bracers_lightning_strike": "Zeus's lightning strikes",
   "subtitles.olympus.poseidons_trident_hit": "Poseidon's trident crashes",
   "subtitles.olympus.ares_spear_landing": "Ares's spear lands",
@@ -61,20 +55,16 @@
   "subtitles.olympus.harpy_hit": "Harpy attacks",
   "subtitles.olympus.harpy_shot": "Harpy fires",
   "subtitles.olympus.harpys_wings_flapping": "Harpy wings flap",
-
   "death.attack.olympus.lightning": "%1$s was electrocuted by %2$s",
   "death.attack.olympus.lightning.item": "%1$s was electrocuted by %2$s using %3$s",
-
   "tooltip.olympus.hold_shift": "Hold %s for details",
   "tooltip.olympus.properties": " Properties",
-
   "tooltip.olympus.aphrodite_lyre.flavor": "Even the wildest beasts yield to the melody of the goddess of love",
   "tooltip.olympus.aphrodite_lyre.abilities": "Abilities ♪",
   "tooltip.olympus.aphrodite_lyre.ability_title_1": " Song of Cythera",
   "tooltip.olympus.aphrodite_lyre.ability_description_1": "  Playing charms nearby adult animals into love",
   "tooltip.olympus.aphrodite_lyre.properties.radius": "Range: %1$s blocks",
   "tooltip.olympus.aphrodite_lyre.properties.cooldown": "Cooldown: %1$s",
-
   "tooltip.olympus.bow_of_artemis.flavor": "The moonlight blesses the path of the ultimate hunter",
   "tooltip.olympus.bow_of_artemis.abilities": "Abilities ➹",
   "tooltip.olympus.bow_of_artemis.ability_title_1": " Moonlit Hunt",
@@ -84,7 +74,6 @@
   "tooltip.olympus.bow_of_artemis.ability_title_2": " Guardian Arrow",
   "tooltip.olympus.bow_of_artemis.ability_description_2": "  Arrows heal your tamed animals instead of harming them",
   "tooltip.olympus.bow_of_artemis.properties.tamed_healing": "Healing: %1$s of arrow damage",
-
   "tooltip.olympus.bracers_of_zeus.flavor": "The fury of the storm rests upon your wrists",
   "tooltip.olympus.bracers_of_zeus.abilities": "Abilities ⚡",
   "tooltip.olympus.bracers_of_zeus.ability_title_1": " Chain Lightning",
@@ -94,7 +83,6 @@
   "tooltip.olympus.bracers_of_zeus.properties.chain_range": "Chain range: %1$s blocks",
   "tooltip.olympus.bracers_of_zeus.properties.stun_duration": "Stun duration: %1$s",
   "tooltip.olympus.bracers_of_zeus.properties.cooldown": "Cooldown: %1$s",
-
   "tooltip.olympus.helmet_of_hades.flavor": "Even the shadows of the deep bow before the ruler of the dead",
   "tooltip.olympus.helmet_of_hades.abilities": "Abilities ☠",
   "tooltip.olympus.helmet_of_hades.ability_title_1": " Soul's Defiance",
@@ -103,7 +91,6 @@
   "tooltip.olympus.helmet_of_hades.properties.restored_health": "Health restored: %1$s",
   "tooltip.olympus.helmet_of_hades.properties.invisibility": "Invisibility: %1$s",
   "tooltip.olympus.helmet_of_hades.properties.cooldown": "Cooldown: %1$s",
-
   "tooltip.olympus.hermes_sandals.flavor": "Step upon the clouds and outrun the wind itself",
   "tooltip.olympus.hermes_sandals.abilities": "Abilities ☄",
   "tooltip.olympus.hermes_sandals.ability_title_1": " Sandals of Wind",
@@ -111,7 +98,6 @@
   "tooltip.olympus.hermes_sandals.properties.extra_jumps": "Extra jumps: %1$s",
   "tooltip.olympus.hermes_sandals.properties.movement_speed": "Movement speed: %1$s",
   "tooltip.olympus.hermes_sandals.properties.armor": "Armor: %1$s",
-
   "tooltip.olympus.instruments_of_hephaestus.flavor": "The burning spark of creation still burns within this divine steel",
   "tooltip.olympus.instruments_of_hephaestus.abilities": "Abilities ◆",
   "tooltip.olympus.instruments_of_hephaestus.ability_title_1": " Divine Forge",
@@ -119,7 +105,6 @@
   "tooltip.olympus.instruments_of_hephaestus.properties.repair_amount": "Durability restored: %1$s",
   "tooltip.olympus.instruments_of_hephaestus.properties.repair_cooldown": "Repair interval: %1$s",
   "tooltip.olympus.instruments_of_hephaestus.properties.kill_reduction": "Interval reduced per kill: %1$s",
-
   "tooltip.olympus.persephone_cup.flavor": "A sacred chalice where life blossoms from the ashes of death",
   "tooltip.olympus.persephone_cup.abilities": "Abilities ☯",
   "tooltip.olympus.persephone_cup.ability_title_1": " Soul Harvest",
@@ -131,7 +116,6 @@
   "tooltip.olympus.persephone_cup.properties.charge_cost": "Souls consumed: %1$s",
   "tooltip.olympus.persephone_cup.properties.restored_health": "Health restored: %1$s",
   "tooltip.olympus.persephone_cup.properties.regeneration": "Regeneration: %1$s",
-
   "tooltip.olympus.poppy_of_demeter.flavor": "In its petals sleeps the promise of an eternal harvest",
   "tooltip.olympus.poppy_of_demeter.abilities": "Abilities ✦",
   "tooltip.olympus.poppy_of_demeter.ability_title_1": " Crimson Petals",
@@ -139,7 +123,6 @@
   "tooltip.olympus.poppy_of_demeter.properties.radius": "Range: %1$s blocks",
   "tooltip.olympus.poppy_of_demeter.properties.growth_interval": "Growth interval: %1$s",
   "tooltip.olympus.poppy_of_demeter.properties.growths_per_target": "Growths per target: %1$s",
-
   "tooltip.olympus.poseidon_trident.flavor": "The infinite depths bend to the command of the ocean's lord",
   "tooltip.olympus.poseidon_trident.abilities": "Abilities ⚓",
   "tooltip.olympus.poseidon_trident.ability_title_1": " Lord of the Sea",
@@ -150,7 +133,6 @@
   "tooltip.olympus.poseidon_trident.properties.projectile_damage": "Impact damage: %1$s",
   "tooltip.olympus.poseidon_trident.properties.splash_damage": "Splash damage: %1$s",
   "tooltip.olympus.poseidon_trident.properties.splash_radius": "Splash radius: %1$s blocks",
-
   "tooltip.olympus.spear_of_ares.flavor": "A splinter of Olympus’s pure wrath",
   "tooltip.olympus.spear_of_ares.abilities": "Abilities ⚔",
   "tooltip.olympus.spear_of_ares.ability_title_1": " Ares' Descent",
@@ -158,5 +140,28 @@
   "tooltip.olympus.spear_of_ares.properties.fall_distance": "Minimum fall distance: %1$s blocks",
   "tooltip.olympus.spear_of_ares.properties.cooldown": "Cooldown: %1$s",
   "tooltip.olympus.spear_of_ares.ability_title_2": " Reaper's Javelin",
-  "tooltip.olympus.spear_of_ares.ability_description_2": "  Hold and release the spear to throw it and pin your enemies"
+  "tooltip.olympus.spear_of_ares.ability_description_2": "  Hold and release the spear to throw it and pin your enemies",
+  "tooltip.olympus.hades_bident.flavor": "A relic from the depths of Hades, bound to the souls of fallen creatures",
+  "tooltip.olympus.hades_bident.abilities": "Abilities ☠",
+  "tooltip.olympus.hades_bident.ability_title_1": " Hound of the Underworld",
+  "tooltip.olympus.hades_bident.ability_description_1": "  Hold right-click to summon Cerberus",
+  "tooltip.olympus.hades_bident.ability_title_2": " Bound Souls",
+  "tooltip.olympus.hades_bident.ability_description_2": "  Sneak + right-click to summon one of your three most recently defeated creatures",
+  "tooltip.olympus.hades_bident.ability_title_3": " Call Them Back",
+  "tooltip.olympus.hades_bident.ability_description_3": "  With three companions active, sneak + right-click calls them back",
+  "item.olympus.hades_bident": "Bident of Hades",
+  "entity.olympus.cerberus": "Cerberus",
+  "item.olympus.hades_bident.lore": "A relic from the depths of Hades. It binds fallen creatures and summons the hound of the underworld.",
+  "item.olympus.hades_bident.ability_cerberus": "Hold right-click: Summons Cerberus.",
+  "item.olympus.hades_bident.ability_minions": "Sneak + right-click: Summons one of your three most recently defeated creatures.",
+  "item.olympus.hades_bident.ability_recall": "With three companions active, sneak + right-click calls them back.",
+  "item.olympus.hades_bident.kill_history": "Each kill with the Bident is remembered. The Ender Dragon and Warden resist its binding.",
+  "message.olympus.cerberus_summoned": "Cerberus is fighting by your side.",
+  "message.olympus.cerberus_already_active": "Cerberus is already by your side.",
+  "message.olympus.cerberus_spawn_blocked": "There is not enough room for Cerberus here.",
+  "message.olympus.minion_summoned": "The mob is fighting by your side.",
+  "message.olympus.no_recent_mobs": "You have not defeated any mobs with the Bident yet.",
+  "message.olympus.minion_limit": "You already have three summoned mobs.",
+  "message.olympus.minion_spawn_blocked": "There is no room to summon a mob here.",
+  "message.olympus.minions_recalled": "Your summoned mobs have been teleported to you."
 }

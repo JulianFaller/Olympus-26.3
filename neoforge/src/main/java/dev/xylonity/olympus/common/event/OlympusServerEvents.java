@@ -47,6 +47,7 @@ public final class OlympusServerEvents {
 
     @SubscribeEvent
     public static void registerAttributes(final EntityAttributeCreationEvent event) {
+        OlympusEntities.registerAttributes(event);
         event.put(OlympusEntities.HARPY.get(), HarpyEntity.createAttributes().build());
         event.put(OlympusEntities.ELITE_HARPY.get(), HarpyEntity.createEliteAttributes().build());
     }

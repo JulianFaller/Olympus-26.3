@@ -10,6 +10,7 @@ import dev.xylonity.olympus.common.item.InstrumentsOfHephaestusItem;
 import dev.xylonity.olympus.common.item.PersephoneCupItem;
 import dev.xylonity.olympus.common.item.PoppyOfDemeterItem;
 import dev.xylonity.olympus.common.item.PoseidonTridentItem;
+import dev.xylonity.olympus.common.item.HadesBidentItem;
 import dev.xylonity.olympus.common.item.SpearOfAresItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
@@ -59,6 +60,12 @@ public class OlympusItems {
     public static final DeferredItem<BlockItem> PARTHENON_TERRACOTTA_TILE_SLAB = ITEMS.registerSimpleBlockItem(OlympusBlocks.PARTHENON_TERRACOTTA_TILE_SLAB);
     public static final DeferredItem<BlockItem> CLIMBING_ROSE = ITEMS.registerSimpleBlockItem(OlympusBlocks.CLIMBING_ROSE);
     public static final DeferredItem<BlockItem> AIR_CLOUD_BLOCK = ITEMS.registerSimpleBlockItem(OlympusBlocks.AIR_CLOUD_BLOCK);
+    public static final DeferredItem<HadesBidentItem> HADES_BIDENT = ITEMS.registerItem("hades_bident", HadesBidentItem::new, properties -> properties
+            .rarity(Rarity.EPIC).durability(2000)
+            .attributes(ItemAttributeModifiers.builder()
+                    .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 10, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                    .add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -3.23, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND).build())
+            .component(DataComponents.TOOL, TridentItem.createToolProperties()).enchantable(1).component(DataComponents.WEAPON, new Weapon(1)));
     public static final DeferredItem<PoseidonTridentItem> POSEIDON_TRIDENT = ITEMS.registerItem("poseidon_trident", PoseidonTridentItem::new, properties -> properties
                 .rarity(Rarity.EPIC)
                 .durability(2000)
