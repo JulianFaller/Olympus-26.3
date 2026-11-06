@@ -18,6 +18,7 @@ public final class OlympusCreativeModeTabs {
                     .icon(() -> new ItemStack(OlympusItems.HELMET_OF_HADES.get()))
                     .displayItems((_, output) -> {
                         output.accept(OlympusItems.APHRODITE_LYRE.get());
+                        output.accept(OlympusItems.ARES_HELMET.get());
                         output.accept(OlympusItems.BRACERS_OF_ZEUS.get());
                         output.accept(OlympusItems.BOW_OF_ARTEMIS.get());
                         output.accept(OlympusItems.HELMET_OF_HADES.get());

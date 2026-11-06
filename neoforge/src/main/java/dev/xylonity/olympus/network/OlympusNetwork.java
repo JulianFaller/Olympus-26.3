@@ -1,6 +1,7 @@
 package dev.xylonity.olympus.network;
 
 import dev.xylonity.olympus.common.item.HermesSandalsItem;
+import dev.xylonity.olympus.common.item.AresHelmetItem;
 import dev.xylonity.olympus.common.item.PoseidonCrownItem;
 import dev.xylonity.olympus.network.payload.CameraShakePayload;
 import dev.xylonity.olympus.network.payload.HermesJumpPayload;
@@ -22,7 +23,12 @@ public final class OlympusNetwork {
                 .playToServer(PoseidonBoostPayload.TYPE, PoseidonBoostPayload.STREAM_CODEC, (_, context) ->
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer player) {
-                            PoseidonCrownItem.activateWaterBoost(player);
+                            if (AresHelmetItem.isEquipped(player)) {
+                                AresHelmetItem.activateLaunch(player);
+                            }
+                            else {
+                                PoseidonCrownItem.activateWaterBoost(player);
+                            }
                         }
                     })
                 )

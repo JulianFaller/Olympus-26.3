@@ -40,7 +40,10 @@ public class HelmetOfHadesItem extends Item implements ICurioItem {
 
     @Override
     public boolean canEquipFromUse(final SlotContext slotContext, final ItemStack stack) {
-        return canEquip(slotContext, stack);
+        return canEquip(slotContext, stack) && CuriosApi.getCuriosInventory(slotContext.entity())
+                .flatMap(handler -> handler.getStacksHandler(slotContext.identifier()))
+                .map(handler -> handler.getStacks().getStackInSlot(slotContext.index()).isEmpty())
+                .orElse(false);
     }
 
     @Override

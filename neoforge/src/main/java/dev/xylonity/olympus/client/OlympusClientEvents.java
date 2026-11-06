@@ -108,6 +108,7 @@ public final class OlympusClientEvents {
         ICurioRenderer.register(OlympusItems.BRACERS_OF_ZEUS.get(), BracersOfZeusRenderer::new);
         ICurioRenderer.register(OlympusItems.HELMET_OF_HADES.get(), HelmetOfHadesRenderer::new);
         ICurioRenderer.register(OlympusItems.POSEIDON_CROWN.get(), PoseidonCrownRenderer::new);
+        ICurioRenderer.register(OlympusItems.ARES_HELMET.get(), PoseidonCrownRenderer::new);
         ICurioRenderer.register(OlympusItems.HERMES_SANDALS.get(), HermesSandalsRenderer::new);
     }
 

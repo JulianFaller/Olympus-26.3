@@ -5,6 +5,7 @@ import dev.xylonity.olympus.common.effect.InvisibilityOfHadesEffect;
 import dev.xylonity.olympus.common.entity.HarpyEntity;
 import dev.xylonity.olympus.common.util.ArtemisArrow;
 import dev.xylonity.olympus.common.item.BracersOfZeusItem;
+import dev.xylonity.olympus.common.item.AresHelmetItem;
 import dev.xylonity.olympus.common.item.HelmetOfHadesItem;
 import dev.xylonity.olympus.common.item.HermesSandalsItem;
 import dev.xylonity.olympus.common.item.InstrumentsOfHephaestusItem;
@@ -117,6 +118,7 @@ public final class OlympusServerEvents {
     public static void onPlayerLoggedOut(final PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             PoseidonCrownItem.clearWaterBoost(player);
+            AresHelmetItem.clearLaunchCharge(player);
         }
     }
 
@@ -287,6 +289,8 @@ public final class OlympusServerEvents {
             HermesSandalsItem.rechargeExtraJumps(player);
             SpearOfAresItem.updateSpecialFall(player);
             PoseidonCrownItem.updateWaterBoost(player);
+            AresHelmetItem.updateLaunchCharge(player);
+            final boolean aresHelmetEquipped = AresHelmetItem.isEquipped(player);
             final boolean crownEquipped = PoseidonCrownItem.isEquipped(player);
             final boolean crownInWater = crownEquipped && player.isInWater();
             final boolean hadesHelmetInNether = HelmetOfHadesItem.isEquipped(player) && player.level().dimension() == Level.NETHER;
@@ -307,9 +311,18 @@ public final class OlympusServerEvents {
                 maintainCrownEffect(player, MobEffects.REGENERATION, 1);
                 maintainCrownEffect(player, MobEffects.STRENGTH, 1);
             }
+            else if (aresHelmetEquipped) {
+                maintainAresEffect(player, MobEffects.REGENERATION);
+                maintainAresEffect(player, MobEffects.STRENGTH);
+            }
             else {
                 player.removeEffect(MobEffects.REGENERATION);
                 player.removeEffect(MobEffects.STRENGTH);
+            }
+
+            if (aresHelmetEquipped) {
+                maintainAresEffect(player, MobEffects.SPEED);
+                maintainAresEffect(player, MobEffects.JUMP_BOOST);
             }
 
             if (crownInWater) {
@@ -341,6 +354,13 @@ public final class OlympusServerEvents {
         final MobEffectInstance current = player.getEffect(effect);
         if (current == null || current.getDuration() <= 20 || current.getAmplifier() != amplifier) {
             player.addEffect(new MobEffectInstance(effect, 60, amplifier, true, false, true));
+        }
+    }
+
+    private static void maintainAresEffect(final ServerPlayer player, final Holder<MobEffect> effect) {
+        final MobEffectInstance current = player.getEffect(effect);
+        if (current == null || current.getAmplifier() == 0 && current.getDuration() <= 20) {
+            player.addEffect(new MobEffectInstance(effect, 60, 0, true, false, true));
         }
     }
 
