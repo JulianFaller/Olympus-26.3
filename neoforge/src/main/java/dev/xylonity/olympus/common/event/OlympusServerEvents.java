@@ -62,6 +62,7 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.enchanting.EnchantedEntityLootEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,6 +110,13 @@ public final class OlympusServerEvents {
             if (!player.getInventory().add(stack)) {
                 player.level().addFreshEntity(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(final PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PoseidonCrownItem.clearWaterBoost(player);
         }
     }
 
@@ -278,6 +286,7 @@ public final class OlympusServerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             HermesSandalsItem.rechargeExtraJumps(player);
             SpearOfAresItem.updateSpecialFall(player);
+            PoseidonCrownItem.updateWaterBoost(player);
             final boolean crownEquipped = PoseidonCrownItem.isEquipped(player);
             final boolean crownInWater = crownEquipped && player.isInWater();
             final boolean hadesHelmetInNether = HelmetOfHadesItem.isEquipped(player) && player.level().dimension() == Level.NETHER;

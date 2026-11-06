@@ -32,6 +32,7 @@ import dev.xylonity.olympus.client.particle.TridentSplashParticle;
 import dev.xylonity.olympus.client.particle.TridentUnderwaterSplashParticle;
 import dev.xylonity.olympus.client.particle.TridentUnderwaterSplashParticleGroup;
 import dev.xylonity.olympus.client.particle.TridentWaterDropParticle;
+import dev.xylonity.olympus.client.particle.PoseidonGeyserParticle;
 import dev.xylonity.olympus.client.item.renderer.BracersOfZeusRenderer;
 import dev.xylonity.olympus.client.item.renderer.HermesSandalsRenderer;
 import dev.xylonity.olympus.client.item.renderer.HelmetOfHadesRenderer;
@@ -46,6 +47,7 @@ import dev.xylonity.olympus.registry.OlympusEntities;
 import dev.xylonity.olympus.network.payload.LightningBoltPayload;
 import dev.xylonity.olympus.network.payload.LyreMusicPayload;
 import dev.xylonity.olympus.network.payload.HermesJumpPayload;
+import dev.xylonity.olympus.network.payload.PoseidonBoostPayload;
 import dev.xylonity.olympus.network.payload.SoulSalvationPayload;
 import dev.xylonity.olympus.common.entity.projectile.AbsorbedSoulEntity;
 import dev.xylonity.olympus.common.entity.projectile.HarpyProjectileEntity;
@@ -99,6 +101,7 @@ public final class OlympusClientEvents {
 
     private static int hermesExtraJumps;
     private static boolean hermesJumpKeyDown;
+    private static boolean poseidonBoostJumpKeyDown;
 
     @SubscribeEvent
     public static void clientSetup(final FMLClientSetupEvent event) {
@@ -171,6 +174,10 @@ public final class OlympusClientEvents {
 
     @SubscribeEvent
     public static void registerParticleProviders(final RegisterParticleProvidersEvent event) {
+        event.registerSpecial(OlympusParticles.POSEIDON_GEYSER.get(), new PoseidonGeyserParticle.EmitterProvider());
+        event.registerSpriteSet(OlympusParticles.POSEIDON_GEYSER_PLUME.get(), PoseidonGeyserParticle.PlumeProvider::new);
+        event.registerSpriteSet(OlympusParticles.POSEIDON_GEYSER_BASE.get(), PoseidonGeyserParticle.BaseProvider::new);
+        event.registerSpriteSet(OlympusParticles.POSEIDON_GEYSER_POOF.get(), PoseidonGeyserParticle.BaseProvider::new);
         event.registerSpriteSet(OlympusParticles.ARES_SPEAR_TRACE.get(), AresSpearTraceParticle.Provider::new);
         event.registerSpriteSet(OlympusParticles.ARES_SPEAR_HIT.get(), AresSpearHitParticle.Provider::new);
         event.registerSpriteSet(OlympusParticles.LYRE_NOTE.get(), LyreNoteParticle.Provider::new);
@@ -278,11 +285,17 @@ public final class OlympusClientEvents {
         if (minecraft.player == null || minecraft.level == null) {
             hermesExtraJumps = HermesSandalsItem.getExtraJumps();
             hermesJumpKeyDown = false;
+            poseidonBoostJumpKeyDown = false;
             return;
         }
 
         // Restarts the jump amount counter
         final boolean jumpKeyDown = minecraft.options.keyJump.isDown();
+        final boolean sneaking = minecraft.player.isShiftKeyDown();
+        if (minecraft.gui.screen() == null && sneaking && jumpKeyDown && !poseidonBoostJumpKeyDown) {
+            ClientPacketDistributor.sendToServer(PoseidonBoostPayload.INSTANCE);
+        }
+
         if (minecraft.player.onGround()) {
             hermesExtraJumps = HermesSandalsItem.getExtraJumps();
         }
@@ -295,6 +308,7 @@ public final class OlympusClientEvents {
         }
 
         hermesJumpKeyDown = jumpKeyDown;
+        poseidonBoostJumpKeyDown = jumpKeyDown;
     }
 
     @SubscribeEvent

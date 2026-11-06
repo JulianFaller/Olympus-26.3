@@ -3,9 +3,19 @@ package dev.xylonity.olympus.common.item;
 import dev.xylonity.olympus.Olympus;
 import dev.xylonity.olympus.common.util.OlympusTooltip;
 import dev.xylonity.olympus.registry.OlympusItems;
+import dev.xylonity.olympus.registry.OlympusParticles;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.particles.GeyserParticleOptions;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
@@ -19,6 +29,9 @@ import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 public final class PoseidonCrownItem extends Item implements ICurioItem {
+    private static final int MAX_BOOST_CHARGE_TICKS = 40;
+    private static final int MIN_BOOST_CHARGE_TICKS = 10;
+    private static final Map<UUID, Integer> BOOST_CHARGE = new HashMap<>();
 
     public PoseidonCrownItem(final Properties properties) {
         super(properties);
@@ -62,6 +75,9 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
                 ),
                 OlympusTooltip.ability(3,
                         OlympusTooltip.property("fall_damage_immunity", "✓")
+                ),
+                OlympusTooltip.ability(4,
+                        OlympusTooltip.property("water_boost_charge", "2 s")
                 ));
     }
 
@@ -69,6 +85,55 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
         return CuriosApi.getCuriosInventory(entity)
                 .map(handler -> handler.isEquipped(OlympusItems.POSEIDON_CROWN.get()))
                 .orElse(false);
+    }
+
+    public static void updateWaterBoost(final ServerPlayer player) {
+        final UUID playerId = player.getUUID();
+        final int charge = BOOST_CHARGE.getOrDefault(playerId, 0);
+
+        if (!isEquipped(player) || player.getAbilities().flying) {
+            BOOST_CHARGE.remove(playerId);
+            return;
+        }
+
+        if (player.isShiftKeyDown() && (player.onGround() || charge > 0)) {
+            final int nextCharge = Math.min(charge + 1, MAX_BOOST_CHARGE_TICKS);
+            BOOST_CHARGE.put(playerId, nextCharge);
+        }
+        else if (!player.isShiftKeyDown()) {
+            BOOST_CHARGE.remove(playerId);
+        }
+    }
+
+    public static void activateWaterBoost(final ServerPlayer player) {
+        final UUID playerId = player.getUUID();
+        final int charge = BOOST_CHARGE.getOrDefault(playerId, 0);
+        if (!isEquipped(player) || !player.isShiftKeyDown() || charge < MIN_BOOST_CHARGE_TICKS
+                || player.getAbilities().flying || player.isInWater() || player.isFallFlying()) {
+            return;
+        }
+
+        BOOST_CHARGE.remove(playerId);
+        final double chargeProgress = (double) (charge - MIN_BOOST_CHARGE_TICKS) / (MAX_BOOST_CHARGE_TICKS - MIN_BOOST_CHARGE_TICKS);
+        final double upwardBoost = chargeProgress < 0.5D
+                ? 0.9D + chargeProgress * 0.2D
+                : 1.0D + (chargeProgress - 0.5D) * 0.7D;
+        final var velocity = player.getDeltaMovement();
+        player.setDeltaMovement(velocity.x, Math.max(velocity.y, upwardBoost), velocity.z);
+        player.connection.send(new ClientboundSetEntityMotionPacket(player));
+        player.fallDistance = 0;
+
+        final ServerLevel level = (ServerLevel) player.level();
+        final double x = player.getX();
+        final double y = player.getY() + 0.1D;
+        final double z = player.getZ();
+        final int waterBlocks = chargeProgress < 0.5D ? 1 : 2;
+        level.sendParticles(new GeyserParticleOptions(OlympusParticles.POSEIDON_GEYSER.get(), waterBlocks), x, y, z, 1, 0, 0, 0, 0);
+        level.playSound(null, x, y, z, SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 1.0F, 0.75F);
+    }
+
+    public static void clearWaterBoost(final ServerPlayer player) {
+        BOOST_CHARGE.remove(player.getUUID());
     }
 
 }
