@@ -51,7 +51,7 @@
 		{
 			"name": "crest_segment_1",
 			"from": [7.5, 13.726, 12.5],
-			"to": [8.5, 15.426, 14.2],
+			"to": [8.5, 18.176, 14.2],
 			"rotation": {"angle": 15, "axis": "x", "origin": [8, 13.726, 13]},
 			"faces": {
 				"north": {"uv": [5.25, 8.5, 5.375, 9], "texture": "#bd26ce0a-f681-478f-86c6-62f8adde8906"},
@@ -65,7 +65,7 @@
 		{
 			"name": "crest_segment_2",
 			"from": [7.5, 14.426, 11],
-			"to": [8.5, 15.926, 12.6],
+			"to": [8.5, 18.776, 12.6],
 			"rotation": {"angle": 10, "axis": "x", "origin": [8, 14.226, 11.8]},
 			"faces": {
 				"north": {"uv": [6, 8.5, 6.125, 9], "texture": "#bd26ce0a-f681-478f-86c6-62f8adde8906"},
@@ -79,7 +79,7 @@
 		{
 			"name": "crest_segment_3",
 			"from": [7.5, 13.726, 9.5],
-			"to": [8.5, 16.126, 11.1],
+			"to": [8.5, 19.426, 11.1],
 			"rotation": {"angle": 5, "axis": "x", "origin": [8, 14.626, 10.3]},
 			"faces": {
 				"north": {"uv": [6.75, 8.5, 6.875, 8.75], "texture": "#bd26ce0a-f681-478f-86c6-62f8adde8906"},
@@ -93,7 +93,7 @@
 		{
 			"name": "crest_segment_4",
 			"from": [7.5, 14.026, 8],
-			"to": [8.5, 16.226, 9.6],
+			"to": [8.5, 19.626, 9.6],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 15.626, 8.8]},
 			"faces": {
 				"north": {"uv": [7.5, 8.5, 7.625, 8.75], "texture": "#bd26ce0a-f681-478f-86c6-62f8adde8906"},
@@ -107,7 +107,7 @@
 		{
 			"name": "crest_segment_5",
 			"from": [7.5, 13.926, 6.5],
-			"to": [8.5, 16.226, 8.1],
+			"to": [8.5, 19.726, 8.1],
 			"rotation": {"angle": -6, "axis": "x", "origin": [8, 14.926, 7.3]},
 			"faces": {
 				"north": {"uv": [8.25, 8.5, 8.375, 8.75], "texture": "#bd26ce0a-f681-478f-86c6-62f8adde8906"},
@@ -121,7 +121,7 @@
 		{
 			"name": "crest_segment_6",
 			"from": [7.5, 14.426, 5],
-			"to": [8.5, 16.026, 6.6],
+			"to": [8.5, 19.276, 6.6],
 			"rotation": {"angle": -12, "axis": "x", "origin": [8, 14.726, 5.8]},
 			"faces": {
 				"north": {"uv": [9, 8.5, 9.125, 8.75], "texture": "#bd26ce0a-f681-478f-86c6-62f8adde8906"},
@@ -135,7 +135,7 @@
 		{
 			"name": "crest_segment_7",
 			"from": [7.5, 14.226, 3.6],
-			"to": [8.5, 15.626, 5.1],
+			"to": [8.5, 18.626, 5.1],
 			"rotation": {"angle": -18, "axis": "x", "origin": [8, 14.226, 4.35]},
 			"faces": {
 				"north": {"uv": [13.125, 8.25, 13.25, 8.5], "texture": "#bd26ce0a-f681-478f-86c6-62f8adde8906"},
@@ -149,7 +149,7 @@
 		{
 			"name": "crest_segment_8",
 			"from": [7.5, 13.526, 2.4],
-			"to": [8.5, 15.126, 3.8],
+			"to": [8.5, 17.626, 3.8],
 			"rotation": {"angle": -24, "axis": "x", "origin": [8, 13.526, 3.1]},
 			"faces": {
 				"north": {"uv": [9.625, 8.25, 9.75, 8.75], "texture": "#bd26ce0a-f681-478f-86c6-62f8adde8906"},
