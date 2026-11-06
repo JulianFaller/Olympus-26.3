@@ -27,6 +27,7 @@ public final class OlympusCreativeModeTabs {
                         output.accept(OlympusItems.POPPY_OF_DEMETER.get());
                         output.accept(OlympusItems.HADES_BIDENT.get());
                         output.accept(OlympusItems.POSEIDON_TRIDENT.get());
+                        output.accept(OlympusItems.POSEIDON_CROWN.get());
                         output.accept(OlympusItems.SPEAR_OF_ARES.get());
                         output.accept(OlympusItems.HARPY_SPAWN_EGG.get());
                         output.accept(OlympusItems.ELITE_HARPY_SPAWN_EGG.get());

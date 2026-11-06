@@ -35,6 +35,7 @@ import dev.xylonity.olympus.client.particle.TridentWaterDropParticle;
 import dev.xylonity.olympus.client.item.renderer.BracersOfZeusRenderer;
 import dev.xylonity.olympus.client.item.renderer.HermesSandalsRenderer;
 import dev.xylonity.olympus.client.item.renderer.HelmetOfHadesRenderer;
+import dev.xylonity.olympus.client.item.renderer.PoseidonCrownRenderer;
 import dev.xylonity.olympus.client.item.model.HermesSandalsModel;
 import dev.xylonity.olympus.client.compat.IrisCompat;
 import dev.xylonity.olympus.client.texture.SpearDissolveTextures;
@@ -103,6 +104,7 @@ public final class OlympusClientEvents {
     public static void clientSetup(final FMLClientSetupEvent event) {
         ICurioRenderer.register(OlympusItems.BRACERS_OF_ZEUS.get(), BracersOfZeusRenderer::new);
         ICurioRenderer.register(OlympusItems.HELMET_OF_HADES.get(), HelmetOfHadesRenderer::new);
+        ICurioRenderer.register(OlympusItems.POSEIDON_CROWN.get(), PoseidonCrownRenderer::new);
         ICurioRenderer.register(OlympusItems.HERMES_SANDALS.get(), HermesSandalsRenderer::new);
     }
 

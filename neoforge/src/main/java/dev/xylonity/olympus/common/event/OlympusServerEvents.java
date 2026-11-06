@@ -9,12 +9,17 @@ import dev.xylonity.olympus.common.item.HelmetOfHadesItem;
 import dev.xylonity.olympus.common.item.HermesSandalsItem;
 import dev.xylonity.olympus.common.item.InstrumentsOfHephaestusItem;
 import dev.xylonity.olympus.common.item.PersephoneCupItem;
+import dev.xylonity.olympus.common.item.PoseidonCrownItem;
 import dev.xylonity.olympus.common.item.SpearOfAresItem;
 import dev.xylonity.olympus.config.OlympusConfig;
 import dev.xylonity.olympus.registry.OlympusDamageTypes;
 import dev.xylonity.olympus.registry.OlympusEntities;
 import dev.xylonity.olympus.registry.OlympusItems;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.Holder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -159,8 +164,19 @@ public final class OlympusServerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             HermesSandalsItem.rechargeExtraJumps(player);
             SpearOfAresItem.updateSpecialFall(player);
+            if (PoseidonCrownItem.isEquipped(player)) {
+                maintainCrownEffect(player, MobEffects.WATER_BREATHING);
+                maintainCrownEffect(player, MobEffects.DOLPHINS_GRACE);
+            }
         }
 
+    }
+
+    private static void maintainCrownEffect(final ServerPlayer player, final Holder<MobEffect> effect) {
+        final MobEffectInstance current = player.getEffect(effect);
+        if (current == null || current.getDuration() <= 20) {
+            player.addEffect(new MobEffectInstance(effect, 60, 0, true, false, true));
+        }
     }
 
     @SubscribeEvent
