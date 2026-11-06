@@ -3,7 +3,9 @@ package dev.xylonity.olympus.common.item;
 import dev.xylonity.olympus.common.util.OlympusTooltip;
 import dev.xylonity.olympus.registry.OlympusItems;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
@@ -25,6 +27,8 @@ public final class AresHelmetItem extends Item implements ICurioItem {
     private static final int MAX_LAUNCH_CHARGE_TICKS = 40;
     private static final int MIN_LAUNCH_CHARGE_TICKS = 10;
     private static final Map<UUID, Integer> LAUNCH_CHARGE = new HashMap<>();
+    private static final Set<UUID> LAUNCH_FALL_PROTECTION = new HashSet<>();
+    private static final Set<UUID> LAUNCH_LEFT_GROUND = new HashSet<>();
 
     public AresHelmetItem(final Properties properties) {
         super(properties);
@@ -116,10 +120,36 @@ public final class AresHelmetItem extends Item implements ICurioItem {
         );
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
         player.fallDistance = 0;
+        LAUNCH_FALL_PROTECTION.add(playerId);
+        LAUNCH_LEFT_GROUND.remove(playerId);
+    }
+
+    public static boolean hasLaunchFallProtection(final ServerPlayer player) {
+        return LAUNCH_FALL_PROTECTION.contains(player.getUUID());
+    }
+
+    public static void updateLaunchFallProtection(final ServerPlayer player) {
+        final UUID playerId = player.getUUID();
+        if (!LAUNCH_FALL_PROTECTION.contains(playerId)) {
+            return;
+        }
+
+        if (!player.onGround()) {
+            LAUNCH_LEFT_GROUND.add(playerId);
+        }
+        else if (LAUNCH_LEFT_GROUND.remove(playerId)) {
+            LAUNCH_FALL_PROTECTION.remove(playerId);
+        }
+    }
+
+    public static void clearLaunchFallProtection(final ServerPlayer player) {
+        LAUNCH_FALL_PROTECTION.remove(player.getUUID());
+        LAUNCH_LEFT_GROUND.remove(player.getUUID());
     }
 
     public static void clearLaunchCharge(final ServerPlayer player) {
         LAUNCH_CHARGE.remove(player.getUUID());
+        clearLaunchFallProtection(player);
     }
 
     private static void spawnChargeParticles(final ServerPlayer player, final int charge) {

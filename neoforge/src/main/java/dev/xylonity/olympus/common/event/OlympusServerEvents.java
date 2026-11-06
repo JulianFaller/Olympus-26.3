@@ -193,7 +193,17 @@ public final class OlympusServerEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingDamagePre(final LivingDamageEvent.Pre event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY) || event.getNewDamage() < player.getHealth() + player.getAbsorptionAmount()) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        if (AresHelmetItem.hasLaunchFallProtection(player) && event.getSource().is(DamageTypeTags.IS_FALL)) {
+            event.setNewDamage(0);
+            AresHelmetItem.clearLaunchFallProtection(player);
+            return;
+        }
+
+        if (event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY) || event.getNewDamage() < player.getHealth() + player.getAbsorptionAmount()) {
             return;
         }
 
@@ -261,6 +271,12 @@ public final class OlympusServerEvents {
 
     @SubscribeEvent
     public static void onLivingFall(final LivingFallEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && AresHelmetItem.hasLaunchFallProtection(player)) {
+            event.setCanceled(true);
+            AresHelmetItem.clearLaunchFallProtection(player);
+            return;
+        }
+
         // If the spear of ares active ability is active, cancels the damage
         if (event.getEntity() instanceof ServerPlayer player && SpearOfAresItem.handleSpecialLanding(player, event.getDistance())) {
             event.setCanceled(true);
@@ -288,6 +304,7 @@ public final class OlympusServerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             HermesSandalsItem.rechargeExtraJumps(player);
             SpearOfAresItem.updateSpecialFall(player);
+            AresHelmetItem.updateLaunchFallProtection(player);
             PoseidonCrownItem.updateWaterBoost(player);
             AresHelmetItem.updateLaunchCharge(player);
             final boolean aresHelmetEquipped = AresHelmetItem.isEquipped(player);
@@ -333,6 +350,13 @@ public final class OlympusServerEvents {
             }
         }
 
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTickPre(final PlayerTickEvent.Pre event) {
+        if (event.getEntity() instanceof ServerPlayer player && AresHelmetItem.hasLaunchFallProtection(player)) {
+            player.fallDistance = 0;
+        }
     }
 
     private static void maintainCrownEffect(final ServerPlayer player, final Holder<MobEffect> effect) {
