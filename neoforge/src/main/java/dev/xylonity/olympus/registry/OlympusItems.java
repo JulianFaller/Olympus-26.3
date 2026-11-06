@@ -15,6 +15,7 @@ import dev.xylonity.olympus.common.item.HadesBidentItem;
 import dev.xylonity.olympus.common.item.SpearOfAresItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -71,6 +72,7 @@ public class OlympusItems {
     public static final DeferredItem<PoseidonTridentItem> POSEIDON_TRIDENT = ITEMS.registerItem("poseidon_trident", PoseidonTridentItem::new, properties -> properties
                 .rarity(Rarity.EPIC)
                 .durability(2000)
+                .component(DataComponents.UNBREAKABLE, Unit.INSTANCE)
                 .attributes(PoseidonTridentItem.createAttributes())
                 .component(DataComponents.TOOL, TridentItem.createToolProperties())
                 .enchantable(1)
@@ -78,6 +80,7 @@ public class OlympusItems {
     );
     public static final DeferredItem<SpearOfAresItem> SPEAR_OF_ARES = ITEMS.registerItem("spear_of_ares", SpearOfAresItem::new, properties -> properties.rarity(Rarity.EPIC)
             .durability(2000)
+            .component(DataComponents.UNBREAKABLE, Unit.INSTANCE)
             // Base att modifiers
             .attributes(
                     ItemAttributeModifiers.builder()

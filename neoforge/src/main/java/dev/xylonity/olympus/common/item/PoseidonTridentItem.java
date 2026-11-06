@@ -71,7 +71,7 @@ public final class PoseidonTridentItem extends TridentItem implements GeoItem {
         }
 
         final int useTicks = getUseDuration(stack, user) - remainingUseDuration;
-        if (useTicks < THROW_THRESHOLD_TIME || stack.nextDamageWillBreak()) {
+        if (useTicks < THROW_THRESHOLD_TIME) {
             return false;
         }
 
@@ -80,7 +80,6 @@ public final class PoseidonTridentItem extends TridentItem implements GeoItem {
             return false;
         }
 
-        stack.hurtWithoutBreaking(1, player);
         final ItemStack poseidonTrident = stack.consumeAndReturn(1, player);
         final PoseidonTridentEntity trident = Projectile.spawnProjectileFromRotation(
                 PoseidonTridentEntity::new, serverLevel, poseidonTrident, player, 0.0F, PROJECTILE_SHOOT_POWER, 1.0F
@@ -97,10 +96,6 @@ public final class PoseidonTridentItem extends TridentItem implements GeoItem {
     @Override
     public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
-        if (stack.nextDamageWillBreak()) {
-            return InteractionResult.FAIL;
-        }
-
         player.startUsingItem(hand);
 
         return InteractionResult.CONSUME;

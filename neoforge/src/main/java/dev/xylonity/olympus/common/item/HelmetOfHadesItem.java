@@ -52,6 +52,13 @@ public class HelmetOfHadesItem extends Item implements ICurioItem {
                         OlympusTooltip.property("restored_health", OlympusTooltip.percent(OlympusConfig.INSTANCE.helmetOfHadesRestoredHealthPercentage.get())),
                         OlympusTooltip.property("invisibility", OlympusTooltip.seconds(OlympusConfig.INSTANCE.helmetOfHadesInvisibilitySeconds.get())),
                         OlympusTooltip.property("cooldown", OlympusTooltip.seconds(OlympusConfig.INSTANCE.helmetOfHadesCooldownSeconds.get()))
+                ),
+                OlympusTooltip.ability(2,
+                        OlympusTooltip.property("regeneration", "II"),
+                        OlympusTooltip.property("strength", "II"),
+                        OlympusTooltip.property("bonus_hearts", "10"),
+                        OlympusTooltip.property("fire_resistance", "✓"),
+                        OlympusTooltip.property("nether_mobs_ignore", "✓")
                 ));
 
     }
@@ -65,6 +72,12 @@ public class HelmetOfHadesItem extends Item implements ICurioItem {
                         CuriosSlotTypes.Preset.HEAD.id()
                 )
                 .build();
+    }
+
+    public static boolean isEquipped(final ServerPlayer player) {
+        return CuriosApi.getCuriosInventory(player)
+                .flatMap(handler -> handler.findFirstCurio(OlympusItems.HELMET_OF_HADES.get()))
+                .isPresent();
     }
 
     /// Applies the special effect of the helmet of hades (when receiving a mortal hit)

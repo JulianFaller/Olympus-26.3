@@ -27,8 +27,13 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
+import net.minecraft.world.entity.monster.zombie.Drowned;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -44,11 +49,14 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.enchanting.EnchantedEntityLootEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Olympus.MOD_ID)
 public final class OlympusServerEvents {
+    private static final AttributeModifier POSEIDON_CROWN_BONUS_HEALTH = new AttributeModifier(Olympus.of("poseidon_crown_water_health"), 20.0, AttributeModifier.Operation.ADD_VALUE);
+    private static final AttributeModifier HADES_HELMET_BONUS_HEALTH = new AttributeModifier(Olympus.of("hades_helmet_nether_health"), 20.0, AttributeModifier.Operation.ADD_VALUE);
 
     @SubscribeEvent
     public static void registerAttributes(final EntityAttributeCreationEvent event) {
@@ -92,6 +100,14 @@ public final class OlympusServerEvents {
 
     @SubscribeEvent
     public static void onLivingIncomingDamage(final LivingIncomingDamageEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player
+                && HelmetOfHadesItem.isEquipped(player)
+                && player.level().dimension() == Level.NETHER
+                && event.getSource().is(DamageTypeTags.IS_FIRE)) {
+            event.setCanceled(true);
+            return;
+        }
+
         if (!OlympusConfig.INSTANCE.persephoneCupDamageAppliesToWeapons.get() || !(event.getSource().getEntity() instanceof ServerPlayer player)) {
             return;
         }
@@ -129,8 +145,37 @@ public final class OlympusServerEvents {
         // Clears the current target when the invisibility of hades status effect is applied
         if (target != null && InvisibilityOfHadesEffect.preventsTargeting(target)) {
             event.setNewAboutToBeSetTarget(null);
+            return;
         }
 
+        if (target instanceof ServerPlayer player && event.getEntity() instanceof Mob mob) {
+            final boolean protectedByHadesHelmet = HelmetOfHadesItem.isEquipped(player) && mob.level().dimension() == Level.NETHER;
+            final boolean protectedByPoseidonCrown = PoseidonCrownItem.isEquipped(player) && isSeaMob(mob);
+            if (protectedByHadesHelmet || protectedByPoseidonCrown) {
+                event.setNewAboutToBeSetTarget(null);
+            }
+        }
+
+    }
+
+    @SubscribeEvent
+    public static void onMobEffectApplicable(final MobEffectEvent.Applicable event) {
+        if (event.getEntity() instanceof ServerPlayer player
+                && PoseidonCrownItem.isEquipped(player)
+                && event.getEffectInstance().is(MobEffects.MINING_FATIGUE)) {
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+        }
+    }
+
+    private static boolean isSeaMob(final Mob mob) {
+        final MobCategory category = mob.getType().getCategory();
+        return mob instanceof WaterAnimal
+                || mob instanceof Drowned
+                || mob instanceof Guardian
+                || category == MobCategory.WATER_CREATURE
+                || category == MobCategory.WATER_AMBIENT
+                || category == MobCategory.UNDERGROUND_WATER_CREATURE
+                || category == MobCategory.AXOLOTLS;
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -164,18 +209,60 @@ public final class OlympusServerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             HermesSandalsItem.rechargeExtraJumps(player);
             SpearOfAresItem.updateSpecialFall(player);
-            if (PoseidonCrownItem.isEquipped(player)) {
+            final boolean crownEquipped = PoseidonCrownItem.isEquipped(player);
+            final boolean crownInWater = crownEquipped && player.isInWater();
+            final boolean hadesHelmetInNether = HelmetOfHadesItem.isEquipped(player) && player.level().dimension() == Level.NETHER;
+
+            if (crownEquipped) {
                 maintainCrownEffect(player, MobEffects.WATER_BREATHING);
                 maintainCrownEffect(player, MobEffects.DOLPHINS_GRACE);
+                player.removeEffect(MobEffects.MINING_FATIGUE);
+            }
+
+            final var maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
+            if (maxHealth != null) {
+                setConditionalHealthBonus(maxHealth, POSEIDON_CROWN_BONUS_HEALTH, crownInWater);
+                setConditionalHealthBonus(maxHealth, HADES_HELMET_BONUS_HEALTH, hadesHelmetInNether);
+            }
+
+            if (crownInWater || hadesHelmetInNether) {
+                maintainCrownEffect(player, MobEffects.REGENERATION, 1);
+                maintainCrownEffect(player, MobEffects.STRENGTH, 1);
+            }
+            else {
+                player.removeEffect(MobEffects.REGENERATION);
+                player.removeEffect(MobEffects.STRENGTH);
+            }
+
+            if (crownInWater) {
+                maintainCrownEffect(player, MobEffects.SATURATION, 0);
+            }
+            else {
+                player.removeEffect(MobEffects.SATURATION);
             }
         }
 
     }
 
     private static void maintainCrownEffect(final ServerPlayer player, final Holder<MobEffect> effect) {
+        maintainCrownEffect(player, effect, 0);
+    }
+
+    private static void setConditionalHealthBonus(final net.minecraft.world.entity.ai.attributes.AttributeInstance attribute, final AttributeModifier modifier, final boolean enabled) {
+        if (enabled) {
+            if (!attribute.hasModifier(modifier.id())) {
+                attribute.addTransientModifier(modifier);
+            }
+        }
+        else {
+            attribute.removeModifier(modifier.id());
+        }
+    }
+
+    private static void maintainCrownEffect(final ServerPlayer player, final Holder<MobEffect> effect, final int amplifier) {
         final MobEffectInstance current = player.getEffect(effect);
-        if (current == null || current.getDuration() <= 20) {
-            player.addEffect(new MobEffectInstance(effect, 60, 0, true, false, true));
+        if (current == null || current.getDuration() <= 20 || current.getAmplifier() != amplifier) {
+            player.addEffect(new MobEffectInstance(effect, 60, amplifier, true, false, true));
         }
     }
 

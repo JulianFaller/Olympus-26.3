@@ -50,7 +50,16 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
     public void appendHoverText(final ItemStack stack, final TooltipContext context, final TooltipDisplay display, final Consumer<Component> tooltip, final TooltipFlag flag) {
         super.appendHoverText(stack, context, display, tooltip, flag);
         OlympusTooltip.append(tooltip, "poseidon_crown", 0x42C7D1,
-                OlympusTooltip.ability(1));
+                OlympusTooltip.ability(1,
+                        OlympusTooltip.property("sea_mobs_ignore", "✓"),
+                        OlympusTooltip.property("mining_fatigue_immunity", "✓")
+                ),
+                OlympusTooltip.ability(2,
+                        OlympusTooltip.property("regeneration", "II"),
+                        OlympusTooltip.property("strength", "II"),
+                        OlympusTooltip.property("saturation", "✓"),
+                        OlympusTooltip.property("bonus_hearts", "10")
+                ));
     }
 
     public static boolean isEquipped(final LivingEntity entity) {

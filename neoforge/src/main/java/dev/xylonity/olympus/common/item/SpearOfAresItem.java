@@ -303,7 +303,7 @@ public final class SpearOfAresItem extends TridentItem implements GeoItem {
         }
 
         final int useTicks = getUseDuration(stack, user) - remainingUseDuration;
-        if (useTicks < THROW_THRESHOLD_TIME || stack.nextDamageWillBreak() || player.getCooldowns().isOnCooldown(stack)) {
+        if (useTicks < THROW_THRESHOLD_TIME || player.getCooldowns().isOnCooldown(stack)) {
             return false;
         }
 
@@ -312,8 +312,6 @@ public final class SpearOfAresItem extends TridentItem implements GeoItem {
             return false;
         }
 
-        // Reduces the item durability and doesn't delete the stack
-        stack.hurtWithoutBreaking(1, player);
         final ItemStack aresSpear = stack.copyWithCount(1);
         final SpearOfAresEntity spear = Projectile.spawnProjectileFromRotation(
                 SpearOfAresEntity::new, serverLevel, aresSpear, player, 0.0F, PROJECTILE_SHOOT_POWER, 1.0F
@@ -333,7 +331,7 @@ public final class SpearOfAresItem extends TridentItem implements GeoItem {
     @Override
     public @NonNull InteractionResult use(final @NonNull Level level, final @NonNull Player player, final @NonNull InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
-        if (stack.nextDamageWillBreak() || player.getCooldowns().isOnCooldown(stack)) {
+        if (player.getCooldowns().isOnCooldown(stack)) {
             return InteractionResult.FAIL;
         }
 
