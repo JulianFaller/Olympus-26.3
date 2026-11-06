@@ -15,8 +15,13 @@ import dev.xylonity.olympus.config.OlympusConfig;
 import dev.xylonity.olympus.registry.OlympusDamageTypes;
 import dev.xylonity.olympus.registry.OlympusEntities;
 import dev.xylonity.olympus.registry.OlympusItems;
+import dev.xylonity.olympus.registry.OlympusParticles;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -28,7 +33,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.fish.WaterAnimal;
@@ -47,16 +55,62 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.enchanting.EnchantedEntityLootEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @EventBusSubscriber(modid = Olympus.MOD_ID)
 public final class OlympusServerEvents {
+    private static final TagKey<Item> KEEP_ON_DEATH = TagKey.create(Registries.ITEM, Olympus.of("keep_on_death"));
+    private static final Map<java.util.UUID, List<ItemStack>> KEPT_ITEMS = new HashMap<>();
     private static final AttributeModifier POSEIDON_CROWN_BONUS_HEALTH = new AttributeModifier(Olympus.of("poseidon_crown_water_health"), 20.0, AttributeModifier.Operation.ADD_VALUE);
     private static final AttributeModifier HADES_HELMET_BONUS_HEALTH = new AttributeModifier(Olympus.of("hades_helmet_nether_health"), 20.0, AttributeModifier.Operation.ADD_VALUE);
+
+    @SubscribeEvent
+    public static void onPlayerDrops(final LivingDropsEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        final List<ItemStack> keptItems = new ArrayList<>();
+        for (final ItemEntity drop : event.getDrops()) {
+            if (drop.getItem().is(KEEP_ON_DEATH)) {
+                keptItems.add(drop.getItem().copy());
+                drop.discard();
+            }
+        }
+
+        if (!keptItems.isEmpty()) {
+            KEPT_ITEMS.put(player.getUUID(), keptItems);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerClone(final PlayerEvent.Clone event) {
+        if (!event.isWasDeath() || !(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        final List<ItemStack> keptItems = KEPT_ITEMS.remove(event.getOriginal().getUUID());
+        if (keptItems == null) {
+            return;
+        }
+
+        for (final ItemStack stack : keptItems) {
+            if (!player.getInventory().add(stack)) {
+                player.level().addFreshEntity(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void registerAttributes(final EntityAttributeCreationEvent event) {
@@ -200,6 +254,21 @@ public final class OlympusServerEvents {
         // If the spear of ares active ability is active, cancels the damage
         if (event.getEntity() instanceof ServerPlayer player && SpearOfAresItem.handleSpecialLanding(player, event.getDistance())) {
             event.setCanceled(true);
+            return;
+        }
+
+        if (event.getEntity() instanceof ServerPlayer player
+                && PoseidonCrownItem.isEquipped(player)
+                && event.getDistance() > 3.0F) {
+            event.setCanceled(true);
+            final ServerLevel level = (ServerLevel) player.level();
+            final double x = player.getX();
+            final double y = player.getY() + 0.08D;
+            final double z = player.getZ();
+            level.sendParticles(OlympusParticles.TRIDENT_SPLASH_OF_WATER.get(), x, y, z, 0, 2.2D, 0, 0, 1);
+            level.sendParticles(OlympusParticles.TRIDENT_WATER_DROP.get(), x, y + 0.15D, z, 24, 0.32D, 0.2D, 0.32D, 0.28D);
+            level.sendParticles(ParticleTypes.BUBBLE, x, y, z, 12, 0.35D, 0.08D, 0.35D, 0.12D);
+            level.playSound(null, x, y, z, SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 0.8F, 1.0F);
         }
 
     }

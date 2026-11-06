@@ -59,6 +59,9 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
                         OlympusTooltip.property("strength", "II"),
                         OlympusTooltip.property("saturation", "✓"),
                         OlympusTooltip.property("bonus_hearts", "10")
+                ),
+                OlympusTooltip.ability(3,
+                        OlympusTooltip.property("fall_damage_immunity", "✓")
                 ));
     }
 
