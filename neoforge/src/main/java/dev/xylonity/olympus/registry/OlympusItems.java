@@ -10,6 +10,7 @@ import dev.xylonity.olympus.common.item.HermesSandalsItem;
 import dev.xylonity.olympus.common.item.InstrumentsOfHephaestusItem;
 import dev.xylonity.olympus.common.item.PersephoneCupItem;
 import dev.xylonity.olympus.common.item.PoppyOfDemeterItem;
+import dev.xylonity.olympus.common.item.AmuletOfHadesItem;
 import dev.xylonity.olympus.common.item.PoseidonTridentItem;
 import dev.xylonity.olympus.common.item.PoseidonCrownItem;
 import dev.xylonity.olympus.common.item.HadesBidentItem;
@@ -41,6 +42,7 @@ public class OlympusItems {
     public static final DeferredItem<ArtemisBowItem> BOW_OF_ARTEMIS = ITEMS.registerItem("bow_of_artemis", ArtemisBowItem::new, properties -> properties.durability(384).enchantable(1).rarity(Rarity.EPIC));
     public static final DeferredItem<AphroditeLyreItem> APHRODITE_LYRE = ITEMS.registerItem("aphrodite_lyre", AphroditeLyreItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
     public static final DeferredItem<HelmetOfHadesItem> HELMET_OF_HADES = ITEMS.registerItem("helmet_of_hades", HelmetOfHadesItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
+    public static final DeferredItem<AmuletOfHadesItem> AMULET_OF_HADES = ITEMS.registerItem("amulet_of_hades", AmuletOfHadesItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
     public static final DeferredItem<AresHelmetItem> ARES_HELMET = ITEMS.registerItem("ares_helmet", AresHelmetItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
     public static final DeferredItem<PoseidonCrownItem> POSEIDON_CROWN = ITEMS.registerItem("poseidon_crown", PoseidonCrownItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
     public static final DeferredItem<HermesSandalsItem> HERMES_SANDALS = ITEMS.registerItem("hermes_sandals", HermesSandalsItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
