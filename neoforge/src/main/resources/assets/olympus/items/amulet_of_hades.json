@@ -1,6 +1,19 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "olympus:item/amulet_of_hades/icon"
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": "gui",
+        "model": {
+          "type": "minecraft:model",
+          "model": "olympus:item/amulet_of_hades/icon"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "olympus:item/amulet_of_hades/model"
+    }
   }
 }

@@ -6,6 +6,7 @@ import dev.xylonity.olympus.common.entity.HarpyEntity;
 import dev.xylonity.olympus.common.util.ArtemisArrow;
 import dev.xylonity.olympus.common.item.BracersOfZeusItem;
 import dev.xylonity.olympus.common.item.AresHelmetItem;
+import dev.xylonity.olympus.common.item.AmuletOfHadesItem;
 import dev.xylonity.olympus.common.item.HelmetOfHadesItem;
 import dev.xylonity.olympus.common.item.HermesSandalsItem;
 import dev.xylonity.olympus.common.item.InstrumentsOfHephaestusItem;
@@ -76,6 +77,13 @@ public final class OlympusServerEvents {
     private static final Map<java.util.UUID, List<ItemStack>> KEPT_ITEMS = new HashMap<>();
     private static final AttributeModifier POSEIDON_CROWN_BONUS_HEALTH = new AttributeModifier(Olympus.of("poseidon_crown_water_health"), 20.0, AttributeModifier.Operation.ADD_VALUE);
     private static final AttributeModifier HADES_HELMET_BONUS_HEALTH = new AttributeModifier(Olympus.of("hades_helmet_nether_health"), 20.0, AttributeModifier.Operation.ADD_VALUE);
+
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(final PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            AmuletOfHadesItem.onDimensionChanged(player);
+        }
+    }
 
     @SubscribeEvent
     public static void onPlayerDrops(final LivingDropsEvent event) {
@@ -302,6 +310,7 @@ public final class OlympusServerEvents {
     @SubscribeEvent
     public static void onPlayerTick(final PlayerTickEvent.Post event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            AmuletOfHadesItem.restoreCooldownIfNeeded(player);
             HermesSandalsItem.rechargeExtraJumps(player);
             SpearOfAresItem.updateSpecialFall(player);
             AresHelmetItem.updateLaunchFallProtection(player);

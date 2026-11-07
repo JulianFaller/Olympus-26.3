@@ -2,8 +2,11 @@ package dev.xylonity.olympus.common.item;
 
 import dev.xylonity.olympus.common.util.OlympusTooltip;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -14,17 +17,23 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public final class AmuletOfHadesItem extends Item {
 
+    private static final String TAG_COOLDOWN_END = "olympus_hades_amulet_cooldown_end";
     private static final int CHANNEL_TICKS = 10 * 20;
     private static final int COOLDOWN_TICKS = 5 * 60 * 20;
+    private static final Map<UUID, ResourceKey<Level>> PENDING_DIMENSION_SYNC = new HashMap<>();
 
     public AmuletOfHadesItem(final Properties properties) {
         super(properties);
@@ -88,10 +97,61 @@ public final class AmuletOfHadesItem extends Item {
             return stack;
         }
 
-        player.teleportTo(nether, safePos.getX() + 0.5D, safePos.getY(), safePos.getZ() + 0.5D, java.util.Set.of(), player.getYRot(), player.getXRot(), false);
-        player.getCooldowns().addCooldown(stack, COOLDOWN_TICKS);
+        setCooldownEnd(stack, (long) source.getServer().getTickCount() + COOLDOWN_TICKS);
+        if (!player.teleportTo(nether, safePos.getX() + 0.5D, safePos.getY(), safePos.getZ() + 0.5D, java.util.Set.of(), player.getYRot(), player.getXRot(), false)) {
+            clearCooldownEnd(stack);
+            player.sendSystemMessage(Component.translatable("message.olympus.amulet_of_hades.teleport_failed"), true);
+            return stack;
+        }
         player.sendSystemMessage(Component.translatable("message.olympus.amulet_of_hades.teleported"), true);
         return stack;
+    }
+
+    public static void onDimensionChanged(final ServerPlayer player) {
+        PENDING_DIMENSION_SYNC.put(player.getUUID(), player.level().dimension());
+    }
+
+    public static void restoreCooldownIfNeeded(final ServerPlayer player) {
+        final ServerLevel currentLevel = (ServerLevel) player.level();
+        final long now = currentLevel.getServer().getTickCount();
+        final ResourceKey<Level> pendingDimension = PENDING_DIMENSION_SYNC.get(player.getUUID());
+        final boolean forceClientSync = currentLevel.dimension().equals(pendingDimension);
+        if (forceClientSync) {
+            PENDING_DIMENSION_SYNC.remove(player.getUUID());
+        }
+        for (final ItemStack stack : player.getInventory().getNonEquipmentItems()) {
+            restoreCooldown(player, stack, now, forceClientSync);
+        }
+        restoreCooldown(player, player.getOffhandItem(), now, forceClientSync);
+        restoreCooldown(player, player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD), now, forceClientSync);
+        restoreCooldown(player, player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST), now, forceClientSync);
+        restoreCooldown(player, player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.LEGS), now, forceClientSync);
+        restoreCooldown(player, player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET), now, forceClientSync);
+    }
+
+    private static void restoreCooldown(final ServerPlayer player, final ItemStack stack, final long now, final boolean forceClientSync) {
+        if (!stack.is(dev.xylonity.olympus.registry.OlympusItems.AMULET_OF_HADES.get())) {
+            return;
+        }
+        final long cooldownEnd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getLongOr(TAG_COOLDOWN_END, 0);
+        final int remaining = (int) Math.clamp(cooldownEnd - now, 0, Integer.MAX_VALUE);
+        if (remaining > 0) {
+            final Identifier cooldownGroup = player.getCooldowns().getCooldownGroup(stack);
+            if (forceClientSync) {
+                player.getCooldowns().removeCooldown(cooldownGroup);
+            }
+            if (forceClientSync || !player.getCooldowns().isOnCooldown(stack)) {
+                player.getCooldowns().addCooldown(stack, remaining);
+            }
+        }
+    }
+
+    private static void setCooldownEnd(final ItemStack stack, final long cooldownEnd) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putLong(TAG_COOLDOWN_END, cooldownEnd));
+    }
+
+    private static void clearCooldownEnd(final ItemStack stack) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.remove(TAG_COOLDOWN_END));
     }
 
     @Override
