@@ -31,7 +31,7 @@ Reports:
 - `neoforge/build/reports/gametest/results.xml`: 51 server behavior regression cases.
 - `neoforge/build/reports/gametest/client-results.json`: model, render, effect, and network checks from the real client.
 - `neoforge/runs/client-test/logs/latest.log`: client resource loading and runtime diagnostics.
-- `neoforge/build/libs/olympus-neoforge-26.3-1.0.0.jar`: release artifact.
+- `neoforge/build/libs/olympus-neoforge-26.3-1.1.0.jar`: release artifact.
 
 Server cases cover registered content, normal and elite harpy attributes and AI, Curios slot rules, cup charges and persistence, lethal damage protection and priority, Hades targeting, stun movement, Hermes jump limits, repairs and cooldowns, animal breeding, lightning chains, Ares charging/landing/throwing, Poseidon impact/splash/throwing, Artemis arrows and pet healing, crop growth, climbing roses, clouds, chest unlocking, trial waves and rewards, structure resources, and all payload codecs. The client resolves every item in GUI, first person, and third person contexts, cycles held items, and exercises entity renderers, Curios equipment, custom particles, post effects, and network handlers.
 
@@ -44,7 +44,7 @@ The saved personal CI template is adapted for this Java/NeoForge project. It use
 - [CI](.github/workflows/ci.yml) runs on branch pushes, pull requests, and manual dispatch. Dependabot branch pushes are excluded because its PR receives the checks. Every ordinary push keeps its run; only an older run of the same PR is cancelled.
 - The [shared build action](.github/actions/build-neoforge/action.yml) runs the offline distribution tests and `build :neoforge:verifyMigration`. Linux clients use Xvfb, Mesa software graphics, and a dummy audio driver. Gradle uses its official cache action with the basic GitHub cache provider and a cache directory outside the checkout. Only this repository's trusted `main` builds can write that cache.
 - Build artifacts contain the production JAR, available source/Javadoc JARs, `SHA256SUMS`, and `build-info.json`. The primary JAR's embedded mod, Minecraft, NeoForge, and version metadata are verified; the test mod cannot enter the distribution. Artifacts and runtime diagnostics are retained for 14 days. Worlds are excluded.
-- [Tag releases](.github/workflows/release.yml) require a `v*` tag matching `v{version}` in `gradle.properties` and a commit in `main` history. For the current version, that is `v1.0.0`. The same shared build produces the exact artifact downloaded by the publication job; only that job receives repository write permission. Assets are uploaded to a draft and downloaded again to verify their SHA-256 before publication. Published tags and conflicting draft assets are never overwritten. A failed publication job can resume identical partial draft assets. GitHub selects the latest stable release using its legacy version ordering.
+- [Tag releases](.github/workflows/release.yml) require a `v*` tag matching `v{version}` in `gradle.properties` and a commit in `main` history. For the current version, that is `v1.1.0`. The same shared build produces the exact artifact downloaded by the publication job; only that job receives repository write permission. Assets are uploaded to a draft and downloaded again to verify their SHA-256 before publication. Published tags and conflicting draft assets are never overwritten. A failed publication job can resume identical partial draft assets. GitHub selects the latest stable release using its legacy version ordering.
 
 The trusted repository is explicitly `badnng/Olympus-26.3`, which is itself a fork of the original Olympus project. Its identifier, rather than GitHub's general fork flag, controls distribution. Other forks and PR jobs receive no Telegram credentials. GitHub may require enabling Actions when first using these workflows in a fork. Commit and push the configuration before expecting remote runs; local checks do not mean a hosted workflow has run successfully.
 
@@ -72,7 +72,7 @@ Action references use full commit SHAs. Dependabot checks weekly and groups thei
 
 ```powershell
 python -B -m unittest discover -s .github/scripts -p 'test_*.py'
-python -B .github/scripts/build_metadata.py check-tag --project-root . --tag v1.0.0
+python -B .github/scripts/build_metadata.py check-tag --project-root . --tag v1.1.0
 ```
 
 These Python tests use temporary files and mocked HTTP/GitHub responses; they do not send notifications or publish releases. The current actionlint 1.7.12 schema does not yet know `concurrency.queue`; if using that version, ignore only its unknown `queue` key diagnostic after checking that the value remains `max`. Other syntax and expression diagnostics must still fail validation.
