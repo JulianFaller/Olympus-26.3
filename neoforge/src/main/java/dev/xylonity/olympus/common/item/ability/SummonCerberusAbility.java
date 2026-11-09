@@ -7,6 +7,7 @@ import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.phys.Vec3;
 
@@ -22,8 +23,17 @@ public final class SummonCerberusAbility {
         ServerLevel level = player.level();
         CerberusRegistrySavedData registry = CerberusRegistrySavedData.get(level.getServer());
         UUID ownerId = player.getUUID();
-        if (registry.hasActiveCerberus(ownerId)) {
-            return Result.ALREADY_ACTIVE;
+        UUID activeCerberusId = registry.getActiveCerberusId(ownerId);
+        if (activeCerberusId != null) {
+            for (ServerLevel serverLevel : level.getServer().getAllLevels()) {
+                Entity activeEntity = serverLevel.getEntity(activeCerberusId);
+                if (activeEntity instanceof CerberusEntity activeCerberus && activeCerberus.isAlive()) {
+                    activeCerberus.kill(serverLevel);
+                    break;
+                }
+            }
+            // Clear stale entries too, so a missing or already-dead entity cannot block summoning.
+            registry.clearActiveRegistryEntry(ownerId, activeCerberusId);
         }
 
         CerberusEntity cerberus = OlympusEntities.CERBERUS.get()

@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 public final class CerberusEntity extends Wolf implements GeoEntity {
     private static final RawAnimation WALK_ANIMATION = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation IDLE_ANIMATION = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation LIE_DOWN_ANIMATION = RawAnimation.begin().thenPlayAndHold("lie_down");
 
     private final AnimatableInstanceCache animatableCache = new InstancedAnimatableInstanceCache(this);
 
@@ -37,9 +38,13 @@ public final class CerberusEntity extends Wolf implements GeoEntity {
 
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>("movement", 5, state ->
-                state.setAndContinue(state.isMoving() ? WALK_ANIMATION : IDLE_ANIMATION)
-        ));
+        controllers.add(new AnimationController<>("movement", 5, state -> {
+            if (isInSittingPose()) {
+                return state.setAndContinue(LIE_DOWN_ANIMATION);
+            }
+
+            return state.setAndContinue(state.isMoving() ? WALK_ANIMATION : IDLE_ANIMATION);
+        }));
     }
 
     @Override

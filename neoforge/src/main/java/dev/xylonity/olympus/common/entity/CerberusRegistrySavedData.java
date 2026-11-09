@@ -42,6 +42,10 @@ public final class CerberusRegistrySavedData extends SavedData {
         return activeByOwner.containsKey(ownerId);
     }
 
+    public UUID getActiveCerberusId(UUID ownerId) {
+        return activeByOwner.get(ownerId);
+    }
+
     public boolean register(UUID ownerId, UUID cerberusId) {
         if (activeByOwner.containsKey(ownerId)) {
             return false;

@@ -2,6 +2,7 @@ package dev.xylonity.olympus.common.item.ability;
 
 import dev.xylonity.olympus.registry.OlympusItems;
 import dev.xylonity.olympus.Olympus;
+import dev.xylonity.olympus.common.entity.CerberusEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,6 +20,7 @@ public final class BidentMinionEvents {
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Mob deadMob)) return;
+        if (deadMob instanceof CerberusEntity) return;
         if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
         if (!event.getSource().getWeaponItem().is(OlympusItems.HADES_BIDENT.get())) return;
         BidentMinionAbility.recordKill(player, deadMob);
@@ -46,6 +48,12 @@ public final class BidentMinionEvents {
 
     @SubscribeEvent
     public static void onTargetChange(LivingChangeTargetEvent event) {
+        if (event.getEntity() instanceof CerberusEntity
+                && event.getNewAboutToBeSetTarget() != null
+                && BidentMinionAbility.isMinion(event.getNewAboutToBeSetTarget())) {
+            event.setNewAboutToBeSetTarget(null);
+            return;
+        }
         if (!(event.getEntity() instanceof Mob mob)) return;
         if (BidentMinionAbility.isMinion(mob)
                 && event.getNewAboutToBeSetTarget() != BidentMinionAbility.getOwnerTarget(mob)) {

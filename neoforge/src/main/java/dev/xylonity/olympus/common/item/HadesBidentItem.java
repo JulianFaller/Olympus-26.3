@@ -42,12 +42,6 @@ public final class HadesBidentItem extends Item {
             }
             return InteractionResult.SUCCESS;
         }
-        if (!level.isClientSide()
-                && player instanceof ServerPlayer serverPlayer
-                && SummonCerberusAbility.hasActiveCerberus(level.getServer(), serverPlayer.getUUID())) {
-            sendFeedback(serverPlayer, "message.olympus.cerberus_already_active");
-            return InteractionResult.FAIL;
-        }
         player.startUsingItem(hand);
         return InteractionResult.CONSUME;
     }
