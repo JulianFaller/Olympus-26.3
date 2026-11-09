@@ -75,8 +75,6 @@ import java.util.Map;
 public final class OlympusServerEvents {
     private static final TagKey<Item> KEEP_ON_DEATH = TagKey.create(Registries.ITEM, Olympus.of("keep_on_death"));
     private static final Map<java.util.UUID, List<ItemStack>> KEPT_ITEMS = new HashMap<>();
-    private static final AttributeModifier POSEIDON_CROWN_BONUS_HEALTH = new AttributeModifier(Olympus.of("poseidon_crown_water_health"), 20.0, AttributeModifier.Operation.ADD_VALUE);
-    private static final AttributeModifier HADES_HELMET_BONUS_HEALTH = new AttributeModifier(Olympus.of("hades_helmet_nether_health"), 20.0, AttributeModifier.Operation.ADD_VALUE);
 
     @SubscribeEvent
     public static void onPlayerChangedDimension(final PlayerEvent.PlayerChangedDimensionEvent event) {
@@ -175,6 +173,7 @@ public final class OlympusServerEvents {
         if (event.getEntity() instanceof ServerPlayer player
                 && HelmetOfHadesItem.isEquipped(player)
                 && player.level().dimension() == Level.NETHER
+                && OlympusConfig.INSTANCE.helmetOfHadesFireResistanceEnabled.get()
                 && event.getSource().is(DamageTypeTags.IS_FIRE)) {
             event.setCanceled(true);
             return;
@@ -231,8 +230,8 @@ public final class OlympusServerEvents {
         }
 
         if (target instanceof ServerPlayer player && event.getEntity() instanceof Mob mob) {
-            final boolean protectedByHadesHelmet = HelmetOfHadesItem.isEquipped(player) && mob.level().dimension() == Level.NETHER;
-            final boolean protectedByPoseidonCrown = PoseidonCrownItem.isEquipped(player) && isSeaMob(mob);
+            final boolean protectedByHadesHelmet = HelmetOfHadesItem.isEquipped(player) && mob.level().dimension() == Level.NETHER && OlympusConfig.INSTANCE.helmetOfHadesNetherMobsIgnoreEnabled.get();
+            final boolean protectedByPoseidonCrown = PoseidonCrownItem.isEquipped(player) && isSeaMob(mob) && OlympusConfig.INSTANCE.poseidonCrownSeaMobsIgnoreEnabled.get();
             if (protectedByHadesHelmet || protectedByPoseidonCrown) {
                 event.setNewAboutToBeSetTarget(null);
             }
@@ -244,6 +243,7 @@ public final class OlympusServerEvents {
     public static void onMobEffectApplicable(final MobEffectEvent.Applicable event) {
         if (event.getEntity() instanceof ServerPlayer player
                 && PoseidonCrownItem.isEquipped(player)
+                && OlympusConfig.INSTANCE.poseidonCrownMiningFatigueImmunityEnabled.get()
                 && event.getEffectInstance().is(MobEffects.MINING_FATIGUE)) {
             event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
         }
@@ -281,6 +281,7 @@ public final class OlympusServerEvents {
     public static void onLivingFall(final LivingFallEvent event) {
         if (event.getEntity() instanceof ServerPlayer player
                 && HelmetOfHadesItem.isEquipped(player)
+                && OlympusConfig.INSTANCE.helmetOfHadesFallImmunityEnabled.get()
                 && player.level().dimension() == Level.NETHER) {
             event.setCanceled(true);
             return;
@@ -300,6 +301,7 @@ public final class OlympusServerEvents {
 
         if (event.getEntity() instanceof ServerPlayer player
                 && PoseidonCrownItem.isEquipped(player)
+                && OlympusConfig.INSTANCE.poseidonCrownFallImmunityEnabled.get()
                 && event.getDistance() > 3.0F) {
             event.setCanceled(true);
             final ServerLevel level = (ServerLevel) player.level();
@@ -327,25 +329,35 @@ public final class OlympusServerEvents {
             final boolean crownEquipped = PoseidonCrownItem.isEquipped(player);
             final boolean crownInWater = crownEquipped && player.isInWater();
             final boolean hadesHelmetInNether = HelmetOfHadesItem.isEquipped(player) && player.level().dimension() == Level.NETHER;
+            final boolean hadesHelmetInLava = HelmetOfHadesItem.isEquipped(player) && player.isInLava();
             if (crownEquipped) {
-                maintainCrownEffect(player, MobEffects.WATER_BREATHING);
-                maintainCrownEffect(player, MobEffects.DOLPHINS_GRACE);
-                player.removeEffect(MobEffects.MINING_FATIGUE);
+                if (OlympusConfig.INSTANCE.poseidonCrownWaterBreathingEnabled.get()) maintainCrownEffect(player, MobEffects.WATER_BREATHING);
+                else player.removeEffect(MobEffects.WATER_BREATHING);
+                if (OlympusConfig.INSTANCE.poseidonCrownDolphinsGraceEnabled.get()) maintainCrownEffect(player, MobEffects.DOLPHINS_GRACE);
+                else player.removeEffect(MobEffects.DOLPHINS_GRACE);
+                if (OlympusConfig.INSTANCE.poseidonCrownMiningFatigueImmunityEnabled.get()) player.removeEffect(MobEffects.MINING_FATIGUE);
             }
 
             final var maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
             if (maxHealth != null) {
-                setConditionalHealthBonus(maxHealth, POSEIDON_CROWN_BONUS_HEALTH, crownInWater);
-                setConditionalHealthBonus(maxHealth, HADES_HELMET_BONUS_HEALTH, hadesHelmetInNether);
+                setConditionalHealthBonus(maxHealth, new AttributeModifier(Olympus.of("poseidon_crown_water_health"), OlympusConfig.INSTANCE.poseidonCrownBonusHealth.get(), AttributeModifier.Operation.ADD_VALUE), crownInWater);
+                setConditionalHealthBonus(maxHealth, new AttributeModifier(Olympus.of("hades_helmet_nether_health"), OlympusConfig.INSTANCE.helmetOfHadesBonusHealth.get(), AttributeModifier.Operation.ADD_VALUE), hadesHelmetInNether);
+                setConditionalHealthBonus(player.getAttribute(Attributes.MOVEMENT_SPEED), new AttributeModifier(Olympus.of("hades_helmet_lava_speed"), OlympusConfig.INSTANCE.helmetOfHadesLavaMovementSpeedBonus.get(), AttributeModifier.Operation.ADD_MULTIPLIED_BASE), hadesHelmetInLava);
             }
 
             if (crownInWater || hadesHelmetInNether) {
-                maintainCrownEffect(player, MobEffects.REGENERATION, 1);
-                maintainCrownEffect(player, MobEffects.STRENGTH, 1);
+                if (crownInWater && OlympusConfig.INSTANCE.poseidonCrownRegenerationEnabled.get() || hadesHelmetInNether && OlympusConfig.INSTANCE.helmetOfHadesRegenerationEnabled.get()) {
+                    maintainCrownEffect(player, MobEffects.REGENERATION, crownInWater ? OlympusConfig.INSTANCE.poseidonCrownRegenerationLevel.get() - 1 : OlympusConfig.INSTANCE.helmetOfHadesRegenerationLevel.get() - 1);
+                } else player.removeEffect(MobEffects.REGENERATION);
+                if (crownInWater && OlympusConfig.INSTANCE.poseidonCrownStrengthEnabled.get() || hadesHelmetInNether && OlympusConfig.INSTANCE.helmetOfHadesStrengthEnabled.get()) {
+                    maintainCrownEffect(player, MobEffects.STRENGTH, crownInWater ? OlympusConfig.INSTANCE.poseidonCrownStrengthLevel.get() - 1 : OlympusConfig.INSTANCE.helmetOfHadesStrengthLevel.get() - 1);
+                } else player.removeEffect(MobEffects.STRENGTH);
             }
             else if (aresHelmetEquipped) {
-                maintainAresEffect(player, MobEffects.REGENERATION);
-                maintainAresEffect(player, MobEffects.STRENGTH);
+                if (OlympusConfig.INSTANCE.aresHelmetRegenerationEnabled.get()) maintainAresEffect(player, MobEffects.REGENERATION, OlympusConfig.INSTANCE.aresHelmetRegenerationLevel.get() - 1);
+                else player.removeEffect(MobEffects.REGENERATION);
+                if (OlympusConfig.INSTANCE.aresHelmetStrengthEnabled.get()) maintainAresEffect(player, MobEffects.STRENGTH, OlympusConfig.INSTANCE.aresHelmetStrengthLevel.get() - 1);
+                else player.removeEffect(MobEffects.STRENGTH);
             }
             else {
                 player.removeEffect(MobEffects.REGENERATION);
@@ -353,11 +365,13 @@ public final class OlympusServerEvents {
             }
 
             if (aresHelmetEquipped) {
-                maintainAresEffect(player, MobEffects.SPEED);
-                maintainAresEffect(player, MobEffects.JUMP_BOOST);
+                if (OlympusConfig.INSTANCE.aresHelmetSpeedEnabled.get()) maintainAresEffect(player, MobEffects.SPEED, OlympusConfig.INSTANCE.aresHelmetSpeedLevel.get() - 1);
+                else player.removeEffect(MobEffects.SPEED);
+                if (OlympusConfig.INSTANCE.aresHelmetJumpBoostEnabled.get()) maintainAresEffect(player, MobEffects.JUMP_BOOST, OlympusConfig.INSTANCE.aresHelmetJumpBoostLevel.get() - 1);
+                else player.removeEffect(MobEffects.JUMP_BOOST);
             }
 
-            if (crownInWater) {
+            if (crownInWater && OlympusConfig.INSTANCE.poseidonCrownSaturationEnabled.get()) {
                 maintainCrownEffect(player, MobEffects.SATURATION, 0);
             }
             else {
@@ -396,10 +410,10 @@ public final class OlympusServerEvents {
         }
     }
 
-    private static void maintainAresEffect(final ServerPlayer player, final Holder<MobEffect> effect) {
+    private static void maintainAresEffect(final ServerPlayer player, final Holder<MobEffect> effect, final int amplifier) {
         final MobEffectInstance current = player.getEffect(effect);
-        if (current == null || current.getAmplifier() == 0 && current.getDuration() <= 20) {
-            player.addEffect(new MobEffectInstance(effect, 60, 0, true, false, true));
+        if (current == null || current.getAmplifier() != amplifier || current.getDuration() <= 20) {
+            player.addEffect(new MobEffectInstance(effect, 60, amplifier, true, false, true));
         }
     }
 

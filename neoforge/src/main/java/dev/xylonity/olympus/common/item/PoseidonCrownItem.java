@@ -2,6 +2,7 @@ package dev.xylonity.olympus.common.item;
 
 import dev.xylonity.olympus.Olympus;
 import dev.xylonity.olympus.common.util.OlympusTooltip;
+import dev.xylonity.olympus.config.OlympusConfig;
 import dev.xylonity.olympus.registry.OlympusItems;
 import dev.xylonity.olympus.registry.OlympusParticles;
 import java.util.HashMap;
@@ -29,8 +30,6 @@ import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 public final class PoseidonCrownItem extends Item implements ICurioItem {
-    private static final int MAX_BOOST_CHARGE_TICKS = 40;
-    private static final int MIN_BOOST_CHARGE_TICKS = 10;
     private static final Map<UUID, Integer> BOOST_CHARGE = new HashMap<>();
 
     public PoseidonCrownItem(final Properties properties) {
@@ -56,7 +55,7 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
         return CurioAttributeModifiers.builder()
                 .addModifier(
                         Attributes.SUBMERGED_MINING_SPEED,
-                        new AttributeModifier(Olympus.of("poseidon_crown_submerged_mining_speed"), 0.8, AttributeModifier.Operation.ADD_VALUE),
+                        new AttributeModifier(Olympus.of("poseidon_crown_submerged_mining_speed"), OlympusConfig.INSTANCE.poseidonCrownSubmergedMiningSpeedBonus.get(), AttributeModifier.Operation.ADD_VALUE),
                         CuriosSlotTypes.Preset.HEAD.id()
                 )
                 .build();
@@ -91,6 +90,7 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
     }
 
     public static void updateWaterBoost(final ServerPlayer player) {
+        final int maxBoostChargeTicks = getMaxBoostChargeTicks();
         final UUID playerId = player.getUUID();
         final int charge = BOOST_CHARGE.getOrDefault(playerId, 0);
 
@@ -100,7 +100,7 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
         }
 
         if (player.isShiftKeyDown() && (player.onGround() || charge > 0)) {
-            final int nextCharge = Math.min(charge + 1, MAX_BOOST_CHARGE_TICKS);
+            final int nextCharge = Math.min(charge + 1, maxBoostChargeTicks);
             BOOST_CHARGE.put(playerId, nextCharge);
         }
         else if (!player.isShiftKeyDown()) {
@@ -111,16 +111,17 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
     public static void activateWaterBoost(final ServerPlayer player) {
         final UUID playerId = player.getUUID();
         final int charge = BOOST_CHARGE.getOrDefault(playerId, 0);
-        if (!isEquipped(player) || !player.isShiftKeyDown() || charge < MIN_BOOST_CHARGE_TICKS
+        final int maxBoostChargeTicks = getMaxBoostChargeTicks();
+        final int minBoostChargeTicks = Math.min(maxBoostChargeTicks, getMinBoostChargeTicks());
+        if (!isEquipped(player) || !player.isShiftKeyDown() || charge < minBoostChargeTicks
                 || player.getAbilities().flying || player.isInWater() || player.isFallFlying()) {
             return;
         }
 
         BOOST_CHARGE.remove(playerId);
-        final double chargeProgress = (double) (charge - MIN_BOOST_CHARGE_TICKS) / (MAX_BOOST_CHARGE_TICKS - MIN_BOOST_CHARGE_TICKS);
-        final double upwardBoost = chargeProgress < 0.5D
-                ? 0.9D + chargeProgress * 0.2D
-                : 1.0D + (chargeProgress - 0.5D) * 0.7D;
+        final double chargeProgress = maxBoostChargeTicks == minBoostChargeTicks ? 1.0D : (double) (charge - minBoostChargeTicks) / (maxBoostChargeTicks - minBoostChargeTicks);
+        final double upwardBoost = OlympusConfig.INSTANCE.poseidonCrownWaterBoostMinUpward.get()
+                + chargeProgress * (OlympusConfig.INSTANCE.poseidonCrownWaterBoostMaxUpward.get() - OlympusConfig.INSTANCE.poseidonCrownWaterBoostMinUpward.get());
         final var velocity = player.getDeltaMovement();
         player.setDeltaMovement(velocity.x, Math.max(velocity.y, upwardBoost), velocity.z);
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
@@ -137,6 +138,14 @@ public final class PoseidonCrownItem extends Item implements ICurioItem {
 
     public static void clearWaterBoost(final ServerPlayer player) {
         BOOST_CHARGE.remove(player.getUUID());
+    }
+
+    private static int getMinBoostChargeTicks() {
+        return Math.max(0, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.poseidonCrownWaterBoostMinChargeSeconds.get()));
+    }
+
+    private static int getMaxBoostChargeTicks() {
+        return Math.max(1, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.poseidonCrownWaterBoostMaxChargeSeconds.get()));
     }
 
 }

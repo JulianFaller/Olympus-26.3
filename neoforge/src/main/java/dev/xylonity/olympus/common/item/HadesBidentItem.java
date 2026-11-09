@@ -3,6 +3,7 @@ package dev.xylonity.olympus.common.item;
 import dev.xylonity.olympus.common.item.ability.SummonCerberusAbility;
 import dev.xylonity.olympus.common.item.ability.BidentMinionAbility;
 import dev.xylonity.olympus.common.util.OlympusTooltip;
+import dev.xylonity.olympus.config.OlympusConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -19,7 +20,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import java.util.function.Consumer;
 
 public final class HadesBidentItem extends Item {
-    private static final int SUMMON_CHARGE_TICKS = 100;
     private static final int USE_DURATION_TICKS = 72_000;
 
     public HadesBidentItem(Properties properties) {
@@ -76,12 +76,12 @@ public final class HadesBidentItem extends Item {
     public void onUseTick(Level level, LivingEntity user, ItemStack stack, int ticksRemaining) {
         int useTicks = USE_DURATION_TICKS - ticksRemaining;
         if (level.isClientSide()) {
-            if (useTicks < SUMMON_CHARGE_TICKS) {
+            if (useTicks < getSummonChargeTicks()) {
                 spawnSummonParticles(level, user, useTicks);
             }
             return;
         }
-        if (useTicks < SUMMON_CHARGE_TICKS) {
+        if (useTicks < getSummonChargeTicks()) {
             return;
         }
         if (!(user instanceof ServerPlayer player)) {
@@ -109,6 +109,10 @@ public final class HadesBidentItem extends Item {
             double z = user.getZ() + Math.sin(angle) * radius;
             level.addParticle(ParticleTypes.PORTAL, x, y, z, 0.0, 0.02, 0.0);
         }
+    }
+
+    private static int getSummonChargeTicks() {
+        return Math.max(1, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.hadesBidentSummonChargeSeconds.get()));
     }
 
     private static void sendFeedback(ServerPlayer player, String translationKey) {

@@ -34,6 +34,14 @@ public final class OlympusConfig {
     public final ModConfigSpec.DoubleValue helmetOfHadesRestoredHealthPercentage;
     public final ModConfigSpec.DoubleValue helmetOfHadesInvisibilitySeconds;
     public final ModConfigSpec.DoubleValue helmetOfHadesLavaMovementSpeedBonus;
+    public final ModConfigSpec.BooleanValue helmetOfHadesFireResistanceEnabled;
+    public final ModConfigSpec.BooleanValue helmetOfHadesFallImmunityEnabled;
+    public final ModConfigSpec.BooleanValue helmetOfHadesNetherMobsIgnoreEnabled;
+    public final ModConfigSpec.DoubleValue helmetOfHadesBonusHealth;
+    public final ModConfigSpec.BooleanValue helmetOfHadesRegenerationEnabled;
+    public final ModConfigSpec.IntValue helmetOfHadesRegenerationLevel;
+    public final ModConfigSpec.BooleanValue helmetOfHadesStrengthEnabled;
+    public final ModConfigSpec.IntValue helmetOfHadesStrengthLevel;
 
     public final ModConfigSpec.DoubleValue hermesSandalsArmor;
     public final ModConfigSpec.DoubleValue hermesSandalsMovementSpeedBonus;
@@ -48,6 +56,38 @@ public final class OlympusConfig {
     public final ModConfigSpec.DoubleValue poseidonTridentSplashDamage;
     public final ModConfigSpec.DoubleValue poseidonTridentSplashRadius;
 
+    public final ModConfigSpec.BooleanValue poseidonCrownSeaMobsIgnoreEnabled;
+    public final ModConfigSpec.BooleanValue poseidonCrownMiningFatigueImmunityEnabled;
+    public final ModConfigSpec.BooleanValue poseidonCrownWaterBreathingEnabled;
+    public final ModConfigSpec.BooleanValue poseidonCrownDolphinsGraceEnabled;
+    public final ModConfigSpec.BooleanValue poseidonCrownRegenerationEnabled;
+    public final ModConfigSpec.IntValue poseidonCrownRegenerationLevel;
+    public final ModConfigSpec.BooleanValue poseidonCrownStrengthEnabled;
+    public final ModConfigSpec.IntValue poseidonCrownStrengthLevel;
+    public final ModConfigSpec.BooleanValue poseidonCrownSaturationEnabled;
+    public final ModConfigSpec.BooleanValue poseidonCrownFallImmunityEnabled;
+    public final ModConfigSpec.DoubleValue poseidonCrownBonusHealth;
+    public final ModConfigSpec.DoubleValue poseidonCrownSubmergedMiningSpeedBonus;
+    public final ModConfigSpec.DoubleValue poseidonCrownWaterBoostMinUpward;
+    public final ModConfigSpec.DoubleValue poseidonCrownWaterBoostMaxUpward;
+    public final ModConfigSpec.DoubleValue poseidonCrownWaterBoostMinChargeSeconds;
+    public final ModConfigSpec.DoubleValue poseidonCrownWaterBoostMaxChargeSeconds;
+
+    public final ModConfigSpec.BooleanValue aresHelmetRegenerationEnabled;
+    public final ModConfigSpec.IntValue aresHelmetRegenerationLevel;
+    public final ModConfigSpec.BooleanValue aresHelmetStrengthEnabled;
+    public final ModConfigSpec.IntValue aresHelmetStrengthLevel;
+    public final ModConfigSpec.BooleanValue aresHelmetSpeedEnabled;
+    public final ModConfigSpec.IntValue aresHelmetSpeedLevel;
+    public final ModConfigSpec.BooleanValue aresHelmetJumpBoostEnabled;
+    public final ModConfigSpec.IntValue aresHelmetJumpBoostLevel;
+    public final ModConfigSpec.DoubleValue aresHelmetLaunchMinChargeSeconds;
+    public final ModConfigSpec.DoubleValue aresHelmetLaunchMaxChargeSeconds;
+    public final ModConfigSpec.DoubleValue aresHelmetLaunchMinUpwardBoost;
+    public final ModConfigSpec.DoubleValue aresHelmetLaunchMaxUpwardBoost;
+    public final ModConfigSpec.DoubleValue aresHelmetLaunchMinForwardBoost;
+    public final ModConfigSpec.DoubleValue aresHelmetLaunchMaxForwardBoost;
+
     public final ModConfigSpec.DoubleValue aresSpearAttackDamageBonus;
     public final ModConfigSpec.DoubleValue aresSpearProjectileDamage;
     public final ModConfigSpec.DoubleValue aresSpearWallImpactDamage;
@@ -58,6 +98,12 @@ public final class OlympusConfig {
     public final ModConfigSpec.DoubleValue aresSpearAbilityMinimumFallDistance;
     public final ModConfigSpec.DoubleValue aresSpearAbilityDamage;
     public final ModConfigSpec.DoubleValue aresSpearAbilityRadius;
+
+    public final ModConfigSpec.DoubleValue amuletOfHadesChannelSeconds;
+    public final ModConfigSpec.DoubleValue amuletOfHadesCooldownSeconds;
+    public final ModConfigSpec.DoubleValue hadesBidentSummonChargeSeconds;
+    public final ModConfigSpec.IntValue hadesBidentMaximumMinions;
+    public final ModConfigSpec.DoubleValue hadesBidentManualAttackDamage;
 
     public final ModConfigSpec.IntValue demeterPoppyRadius;
     public final ModConfigSpec.DoubleValue demeterPoppyGrowthIntervalSeconds;
@@ -143,6 +189,14 @@ public final class OlympusConfig {
         helmetOfHadesLavaMovementSpeedBonus = builder
                 .comment("Movement speed bonus in lava while wearing the Helmet of Hades (2.0 = 200% faster)")
                 .defineInRange("lavaMovementSpeedBonus", 2.0D, 0.0D, 10.0D);
+        helmetOfHadesFireResistanceEnabled = builder.define("fireResistanceEnabled", true);
+        helmetOfHadesFallImmunityEnabled = builder.define("fallImmunityEnabled", true);
+        helmetOfHadesNetherMobsIgnoreEnabled = builder.define("netherMobsIgnoreEnabled", true);
+        helmetOfHadesBonusHealth = builder.defineInRange("bonusHealth", 20.0D, 0.0D, 1000.0D);
+        helmetOfHadesRegenerationEnabled = builder.define("regenerationEnabled", true);
+        helmetOfHadesRegenerationLevel = builder.defineInRange("regenerationLevel", 2, 1, 255);
+        helmetOfHadesStrengthEnabled = builder.define("strengthEnabled", true);
+        helmetOfHadesStrengthLevel = builder.defineInRange("strengthLevel", 2, 1, 255);
         builder.pop();
 
         builder.push("hermesSandals");
@@ -188,6 +242,44 @@ public final class OlympusConfig {
                 .defineInRange("splashRadius", 3.5D, 0.1D, 128.0D);
         builder.pop();
 
+        builder.push("poseidonCrown");
+        poseidonCrownSeaMobsIgnoreEnabled = builder.define("seaMobsIgnoreEnabled", true);
+        poseidonCrownMiningFatigueImmunityEnabled = builder.define("miningFatigueImmunityEnabled", true);
+        poseidonCrownWaterBreathingEnabled = builder.define("waterBreathingEnabled", true);
+        poseidonCrownDolphinsGraceEnabled = builder.define("dolphinsGraceEnabled", true);
+        poseidonCrownRegenerationEnabled = builder.define("regenerationEnabled", true);
+        poseidonCrownRegenerationLevel = builder.defineInRange("regenerationLevel", 2, 1, 255);
+        poseidonCrownStrengthEnabled = builder.define("strengthEnabled", true);
+        poseidonCrownStrengthLevel = builder.defineInRange("strengthLevel", 2, 1, 255);
+        poseidonCrownSaturationEnabled = builder.define("saturationEnabled", true);
+        poseidonCrownFallImmunityEnabled = builder.define("fallImmunityEnabled", true);
+        poseidonCrownBonusHealth = builder.defineInRange("bonusHealth", 20.0D, 0.0D, 1000.0D);
+        poseidonCrownSubmergedMiningSpeedBonus = builder
+                .comment("Submerged mining speed added by Poseidon's Crown (0.8 brings vanilla speed to 1.0)")
+                .defineInRange("submergedMiningSpeedBonus", 0.8D, 0.0D, 100.0D);
+        poseidonCrownWaterBoostMinUpward = builder.defineInRange("waterBoostMinUpward", 0.9D, 0.0D, 100.0D);
+        poseidonCrownWaterBoostMaxUpward = builder.defineInRange("waterBoostMaxUpward", 1.7D, 0.0D, 100.0D);
+        poseidonCrownWaterBoostMinChargeSeconds = builder.defineInRange("waterBoostMinChargeSeconds", 0.5D, 0.0D, 60.0D);
+        poseidonCrownWaterBoostMaxChargeSeconds = builder.defineInRange("waterBoostMaxChargeSeconds", 2.0D, 0.01D, 60.0D);
+        builder.pop();
+
+        builder.push("aresHelmet");
+        aresHelmetRegenerationEnabled = builder.define("regenerationEnabled", true);
+        aresHelmetRegenerationLevel = builder.defineInRange("regenerationLevel", 1, 1, 255);
+        aresHelmetStrengthEnabled = builder.define("strengthEnabled", true);
+        aresHelmetStrengthLevel = builder.defineInRange("strengthLevel", 1, 1, 255);
+        aresHelmetSpeedEnabled = builder.define("speedEnabled", true);
+        aresHelmetSpeedLevel = builder.defineInRange("speedLevel", 1, 1, 255);
+        aresHelmetJumpBoostEnabled = builder.define("jumpBoostEnabled", true);
+        aresHelmetJumpBoostLevel = builder.defineInRange("jumpBoostLevel", 1, 1, 255);
+        aresHelmetLaunchMinChargeSeconds = builder.defineInRange("launchMinChargeSeconds", 0.5D, 0.0D, 60.0D);
+        aresHelmetLaunchMaxChargeSeconds = builder.defineInRange("launchMaxChargeSeconds", 2.0D, 0.01D, 60.0D);
+        aresHelmetLaunchMinUpwardBoost = builder.defineInRange("launchMinUpwardBoost", 0.9D, 0.0D, 100.0D);
+        aresHelmetLaunchMaxUpwardBoost = builder.defineInRange("launchMaxUpwardBoost", 1.7D, 0.0D, 100.0D);
+        aresHelmetLaunchMinForwardBoost = builder.defineInRange("launchMinForwardBoost", 0.55D, 0.0D, 100.0D);
+        aresHelmetLaunchMaxForwardBoost = builder.defineInRange("launchMaxForwardBoost", 1.1D, 0.0D, 100.0D);
+        builder.pop();
+
         builder.push("spearOfAres");
         aresSpearAttackDamageBonus = builder
                 .comment("Melee attack damage added by the Spear of Ares")
@@ -231,6 +323,17 @@ public final class OlympusConfig {
         demeterPoppyGrowthsPerTarget = builder
                 .comment("Number of growth accelerations before the Poppy chooses a different block")
                 .defineInRange("growthsPerTarget", 3, 1, 1000);
+        builder.pop();
+
+        builder.push("amuletOfHades");
+        amuletOfHadesChannelSeconds = builder.defineInRange("channelSeconds", 10.0D, 0.0D, 3600.0D);
+        amuletOfHadesCooldownSeconds = builder.defineInRange("cooldownSeconds", 300.0D, 0.0D, 86400.0D);
+        builder.pop();
+
+        builder.push("hadesBident");
+        hadesBidentSummonChargeSeconds = builder.defineInRange("summonChargeSeconds", 5.0D, 0.0D, 60.0D);
+        hadesBidentMaximumMinions = builder.defineInRange("maximumMinions", 3, 1, 100);
+        hadesBidentManualAttackDamage = builder.defineInRange("manualAttackDamage", 2.0D, 0.0D, 1000.0D);
         builder.pop();
     }
 

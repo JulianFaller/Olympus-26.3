@@ -1,6 +1,7 @@
 package dev.xylonity.olympus.common.item.ability;
 
 import dev.xylonity.olympus.Olympus;
+import dev.xylonity.olympus.config.OlympusConfig;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,6 @@ public final class BidentMinionAbility {
     private static final String OWNER_TAG = Olympus.MOD_ID + ":bident_owner";
     private static final String MANUAL_ATTACK_TAG = Olympus.MOD_ID + ":bident_manual_attack";
     private static final String COUNTED_TAG = Olympus.MOD_ID + ":bident_slot_counted";
-    private static final int MAX_MINIONS = 3;
     private static final Codec<Map<String, List<String>>> CODEC = Codec.unboundedMap(
             Codec.STRING, Codec.STRING.listOf());
     private static final SavedDataType<History> TYPE = new SavedDataType<>(
@@ -58,7 +58,8 @@ public final class BidentMinionAbility {
         if (storedRecent == null || storedRecent.isEmpty()) return Result.NO_RECENT_MOBS;
         List<String> recent = new ArrayList<>(storedRecent);
         int active = history.activeCount(owner);
-        if (active >= MAX_MINIONS) {
+        final int maximumMinions = OlympusConfig.INSTANCE.hadesBidentMaximumMinions.get();
+        if (active >= maximumMinions) {
             return recallMinions(player, owner) ? Result.TELEPORTED : Result.LIMIT_REACHED;
         }
 
@@ -135,7 +136,7 @@ public final class BidentMinionAbility {
         if (mob.getPersistentData().getBoolean(MANUAL_ATTACK_TAG).orElse(false)
                 && mob.getTarget() != null && mob.distanceToSqr(mob.getTarget()) <= 4.0
                 && mob.tickCount % 20 == 0) {
-            mob.getTarget().hurtServer(level, level.damageSources().mobAttack(mob), 2.0F);
+            mob.getTarget().hurtServer(level, level.damageSources().mobAttack(mob), OlympusConfig.INSTANCE.hadesBidentManualAttackDamage.get().floatValue());
         }
     }
 
@@ -144,7 +145,7 @@ public final class BidentMinionAbility {
         for (Entity entity : ((ServerLevel) player.level()).getEntities().getAll()) {
             if (!(entity instanceof Mob mob)
                     || !owner.equals(mob.getPersistentData().getString(OWNER_TAG).orElse(""))) continue;
-            double angle = index * (Math.PI * 2.0 / MAX_MINIONS);
+            double angle = index * (Math.PI * 2.0 / Math.max(1, OlympusConfig.INSTANCE.hadesBidentMaximumMinions.get()));
             double x = player.getX() + Math.cos(angle) * 1.5;
             double z = player.getZ() + Math.sin(angle) * 1.5;
             mob.teleportTo(x, player.getY(), z);

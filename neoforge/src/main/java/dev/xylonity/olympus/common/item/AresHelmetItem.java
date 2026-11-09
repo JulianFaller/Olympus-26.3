@@ -1,6 +1,7 @@
 package dev.xylonity.olympus.common.item;
 
 import dev.xylonity.olympus.common.util.OlympusTooltip;
+import dev.xylonity.olympus.config.OlympusConfig;
 import dev.xylonity.olympus.registry.OlympusItems;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,8 +25,6 @@ import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 public final class AresHelmetItem extends Item implements ICurioItem {
-    private static final int MAX_LAUNCH_CHARGE_TICKS = 40;
-    private static final int MIN_LAUNCH_CHARGE_TICKS = 10;
     private static final Map<UUID, Integer> LAUNCH_CHARGE = new HashMap<>();
     private static final Set<UUID> LAUNCH_FALL_PROTECTION = new HashSet<>();
     private static final Set<UUID> LAUNCH_LEFT_GROUND = new HashSet<>();
@@ -69,6 +68,8 @@ public final class AresHelmetItem extends Item implements ICurioItem {
     }
 
     public static void updateLaunchCharge(final ServerPlayer player) {
+        final int maxChargeTicks = Math.max(1, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.aresHelmetLaunchMaxChargeSeconds.get()));
+        final int minChargeTicks = Math.min(maxChargeTicks, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.aresHelmetLaunchMinChargeSeconds.get()));
         final UUID playerId = player.getUUID();
         final int charge = LAUNCH_CHARGE.getOrDefault(playerId, 0);
 
@@ -78,15 +79,15 @@ public final class AresHelmetItem extends Item implements ICurioItem {
         }
 
         if (player.isShiftKeyDown() && (player.onGround() || charge > 0)) {
-            final int nextCharge = Math.min(charge + 1, MAX_LAUNCH_CHARGE_TICKS);
+            final int nextCharge = Math.min(charge + 1, maxChargeTicks);
             LAUNCH_CHARGE.put(playerId, nextCharge);
-            if (nextCharge >= MAX_LAUNCH_CHARGE_TICKS && charge < MAX_LAUNCH_CHARGE_TICKS) {
+            if (nextCharge >= maxChargeTicks && charge < maxChargeTicks) {
                 spawnMaximumChargeParticles(player);
             }
-            else if (nextCharge < MAX_LAUNCH_CHARGE_TICKS && nextCharge % 4 == 0) {
+            else if (nextCharge < maxChargeTicks && nextCharge % 4 == 0) {
                 spawnChargeParticles(player, nextCharge);
             }
-            else if (nextCharge >= MAX_LAUNCH_CHARGE_TICKS && player.level().getGameTime() % 4 == 0) {
+            else if (nextCharge >= maxChargeTicks && player.level().getGameTime() % 4 == 0) {
                 spawnMaximumChargePulse(player);
             }
         }
@@ -98,17 +99,19 @@ public final class AresHelmetItem extends Item implements ICurioItem {
     public static void activateLaunch(final ServerPlayer player) {
         final UUID playerId = player.getUUID();
         final int charge = LAUNCH_CHARGE.getOrDefault(playerId, 0);
-        if (!isEquipped(player) || !player.isShiftKeyDown() || charge < MIN_LAUNCH_CHARGE_TICKS
+        final int maxChargeTicks = Math.max(1, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.aresHelmetLaunchMaxChargeSeconds.get()));
+        final int minChargeTicks = Math.min(maxChargeTicks, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.aresHelmetLaunchMinChargeSeconds.get()));
+        if (!isEquipped(player) || !player.isShiftKeyDown() || charge < minChargeTicks
                 || player.getAbilities().flying || player.isInWater() || player.isFallFlying()) {
             return;
         }
 
         LAUNCH_CHARGE.remove(playerId);
-        final double chargeProgress = (double) (charge - MIN_LAUNCH_CHARGE_TICKS) / (MAX_LAUNCH_CHARGE_TICKS - MIN_LAUNCH_CHARGE_TICKS);
-        final double upwardBoost = chargeProgress < 0.5D
-                ? 0.9D + chargeProgress * 0.2D
-                : 1.0D + (chargeProgress - 0.5D) * 0.7D;
-        final double forwardBoost = 0.55D + chargeProgress * 0.55D;
+        final double chargeProgress = maxChargeTicks == minChargeTicks ? 1.0D : (double) (charge - minChargeTicks) / (maxChargeTicks - minChargeTicks);
+        final double upwardBoost = OlympusConfig.INSTANCE.aresHelmetLaunchMinUpwardBoost.get()
+                + chargeProgress * (OlympusConfig.INSTANCE.aresHelmetLaunchMaxUpwardBoost.get() - OlympusConfig.INSTANCE.aresHelmetLaunchMinUpwardBoost.get());
+        final double forwardBoost = OlympusConfig.INSTANCE.aresHelmetLaunchMinForwardBoost.get()
+                + chargeProgress * (OlympusConfig.INSTANCE.aresHelmetLaunchMaxForwardBoost.get() - OlympusConfig.INSTANCE.aresHelmetLaunchMinForwardBoost.get());
         final double yawRadians = Math.toRadians(player.getYRot());
         final double forwardX = -Math.sin(yawRadians);
         final double forwardZ = Math.cos(yawRadians);

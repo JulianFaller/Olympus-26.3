@@ -1,6 +1,7 @@
 package dev.xylonity.olympus.common.item;
 
 import dev.xylonity.olympus.common.util.OlympusTooltip;
+import dev.xylonity.olympus.config.OlympusConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -31,8 +32,6 @@ import java.util.UUID;
 public final class AmuletOfHadesItem extends Item {
 
     private static final String TAG_COOLDOWN_END = "olympus_hades_amulet_cooldown_end";
-    private static final int CHANNEL_TICKS = 10 * 20;
-    private static final int COOLDOWN_TICKS = 5 * 60 * 20;
     private static final Map<UUID, ResourceKey<Level>> PENDING_DIMENSION_SYNC = new HashMap<>();
 
     public AmuletOfHadesItem(final Properties properties) {
@@ -58,7 +57,7 @@ public final class AmuletOfHadesItem extends Item {
 
     @Override
     public int getUseDuration(final @NonNull ItemStack stack, final @NonNull LivingEntity user) {
-        return CHANNEL_TICKS;
+        return OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.amuletOfHadesChannelSeconds.get());
     }
 
     @Override
@@ -69,7 +68,7 @@ public final class AmuletOfHadesItem extends Item {
     @Override
     public void onUseTick(final @NonNull Level level, final @NonNull LivingEntity user, final @NonNull ItemStack stack, final int remainingUseDuration) {
         if (level.isClientSide()) {
-            spawnChannelParticles(level, user, CHANNEL_TICKS - remainingUseDuration);
+            spawnChannelParticles(level, user, getChannelTicks() - remainingUseDuration);
         }
     }
 
@@ -97,7 +96,8 @@ public final class AmuletOfHadesItem extends Item {
             return stack;
         }
 
-        setCooldownEnd(stack, (long) source.getServer().getTickCount() + COOLDOWN_TICKS);
+        final int cooldownTicks = OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.amuletOfHadesCooldownSeconds.get());
+        setCooldownEnd(stack, (long) source.getServer().getTickCount() + cooldownTicks);
         if (!player.teleportTo(nether, safePos.getX() + 0.5D, safePos.getY(), safePos.getZ() + 0.5D, java.util.Set.of(), player.getYRot(), player.getXRot(), false)) {
             clearCooldownEnd(stack);
             player.sendSystemMessage(Component.translatable("message.olympus.amulet_of_hades.teleport_failed"), true);
@@ -192,7 +192,8 @@ public final class AmuletOfHadesItem extends Item {
     }
 
     private static void spawnChannelParticles(final Level level, final LivingEntity user, final int useTicks) {
-        final double progress = Math.min(1.0D, (double) useTicks / CHANNEL_TICKS);
+        final int channelTicks = Math.max(1, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.amuletOfHadesChannelSeconds.get()));
+        final double progress = Math.min(1.0D, (double) useTicks / channelTicks);
         final double radius = 0.9D;
         final double height = user.getBbHeight();
         final int particleCount = 2 + (int) (progress * 10.0D);
@@ -207,5 +208,9 @@ public final class AmuletOfHadesItem extends Item {
                 level.addParticle(ParticleTypes.SOUL, x, y, z, 0.0D, 0.025D + progress * 0.06D, 0.0D);
             }
         }
+    }
+
+    private static int getChannelTicks() {
+        return Math.max(1, OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.amuletOfHadesChannelSeconds.get()));
     }
 }
