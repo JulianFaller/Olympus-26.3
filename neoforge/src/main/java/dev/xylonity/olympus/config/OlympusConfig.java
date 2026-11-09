@@ -33,6 +33,7 @@ public final class OlympusConfig {
     public final ModConfigSpec.DoubleValue helmetOfHadesArmor;
     public final ModConfigSpec.DoubleValue helmetOfHadesRestoredHealthPercentage;
     public final ModConfigSpec.DoubleValue helmetOfHadesInvisibilitySeconds;
+    public final ModConfigSpec.DoubleValue helmetOfHadesLavaMovementSpeedBonus;
 
     public final ModConfigSpec.DoubleValue hermesSandalsArmor;
     public final ModConfigSpec.DoubleValue hermesSandalsMovementSpeedBonus;
@@ -139,6 +140,9 @@ public final class OlympusConfig {
         helmetOfHadesInvisibilitySeconds = builder
                 .comment("Duration (in seconds) of the Helmet's invisibility after preventing death")
                 .defineInRange("invisibilitySeconds", 30.0D, 0.0D, 3600.0D);
+        helmetOfHadesLavaMovementSpeedBonus = builder
+                .comment("Movement speed bonus in lava while wearing the Helmet of Hades (2.0 = 200% faster)")
+                .defineInRange("lavaMovementSpeedBonus", 2.0D, 0.0D, 10.0D);
         builder.pop();
 
         builder.push("hermesSandals");

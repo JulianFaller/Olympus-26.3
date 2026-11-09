@@ -279,6 +279,13 @@ public final class OlympusServerEvents {
 
     @SubscribeEvent
     public static void onLivingFall(final LivingFallEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player
+                && HelmetOfHadesItem.isEquipped(player)
+                && player.level().dimension() == Level.NETHER) {
+            event.setCanceled(true);
+            return;
+        }
+
         if (event.getEntity() instanceof ServerPlayer player && AresHelmetItem.hasLaunchFallProtection(player)) {
             event.setCanceled(true);
             AresHelmetItem.clearLaunchFallProtection(player);
@@ -320,7 +327,6 @@ public final class OlympusServerEvents {
             final boolean crownEquipped = PoseidonCrownItem.isEquipped(player);
             final boolean crownInWater = crownEquipped && player.isInWater();
             final boolean hadesHelmetInNether = HelmetOfHadesItem.isEquipped(player) && player.level().dimension() == Level.NETHER;
-
             if (crownEquipped) {
                 maintainCrownEffect(player, MobEffects.WATER_BREATHING);
                 maintainCrownEffect(player, MobEffects.DOLPHINS_GRACE);

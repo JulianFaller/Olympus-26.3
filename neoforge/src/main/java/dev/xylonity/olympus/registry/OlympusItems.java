@@ -69,6 +69,7 @@ public class OlympusItems {
     public static final DeferredItem<BlockItem> AIR_CLOUD_BLOCK = ITEMS.registerSimpleBlockItem(OlympusBlocks.AIR_CLOUD_BLOCK);
     public static final DeferredItem<HadesBidentItem> HADES_BIDENT = ITEMS.registerItem("hades_bident", HadesBidentItem::new, properties -> properties
             .rarity(Rarity.EPIC).durability(2000)
+            .component(DataComponents.UNBREAKABLE, Unit.INSTANCE)
             .attributes(ItemAttributeModifiers.builder()
                     .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 10, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
                     .add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -3.23, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND).build())

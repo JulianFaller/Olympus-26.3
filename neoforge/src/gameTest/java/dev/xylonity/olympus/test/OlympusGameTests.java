@@ -206,7 +206,7 @@ public final class OlympusGameTests {
     }
 
     private static void registeredContent(GameTestHelper h) {
-        near(h, OlympusItems.ITEMS.getEntries().size(), 34, "Item count");
+        near(h, OlympusItems.ITEMS.getEntries().size(), 37, "Item count");
         near(h, OlympusEntities.ENTITIES.getEntries().size(), 8, "Entity count");
         OlympusItems.ITEMS.getEntries().forEach(entry -> check(h, !entry.get().getDefaultInstance().isEmpty(), "Empty item " + entry.getId()));
         OlympusBlocks.BLOCKS.getEntries().forEach(entry -> check(h, entry.get().defaultBlockState().getBlock() == entry.get(), "Block state " + entry.getId()));
@@ -814,7 +814,8 @@ public final class OlympusGameTests {
         if (ares) {
             near(h, h.getLevel().getEntitiesOfClass(SpearOfAresEntity.class, bounds).size(), 1, "Ares projectile spawn");
             near(h, stack.getCount(), 1, "Ares throw consumed held spear");
-            near(h, stack.getDamageValue(), 1, "Ares throw durability cost");
+            check(h, stack.has(DataComponents.UNBREAKABLE), "Ares spear should be unbreakable");
+            near(h, stack.getDamageValue(), 0, "Ares throw changed unbreakable spear durability");
             check(h, player.getCooldowns().isOnCooldown(stack), "Ares throw cooldown");
         } else {
             near(h, h.getLevel().getEntitiesOfClass(PoseidonTridentEntity.class, bounds).size(), 1, "Trident projectile spawn");

@@ -40,7 +40,7 @@ public final class BidentMinionAbility {
 
     public static void recordKill(ServerPlayer player, Mob mob) {
         String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()).toString();
-        if (entityId.equals("minecraft:ender_dragon") || entityId.equals("minecraft:warden")) return;
+        if (entityId.equals("minecraft:ender_dragon") || entityId.equals("minecraft:warden") || entityId.equals("minecraft:wither")) return;
         History history = get(player.level().getServer());
         List<String> recent = new ArrayList<>(history.recent.getOrDefault(player.getStringUUID(), List.of()));
         String id = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()).toString();

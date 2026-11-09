@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -61,6 +62,8 @@ public class HelmetOfHadesItem extends Item implements ICurioItem {
                         OlympusTooltip.property("strength", "II"),
                         OlympusTooltip.property("bonus_hearts", "10"),
                         OlympusTooltip.property("fire_resistance", "✓"),
+                        OlympusTooltip.property("fall_immunity", "✓"),
+                        OlympusTooltip.property("lava_movement_speed", OlympusTooltip.percent(OlympusConfig.INSTANCE.helmetOfHadesLavaMovementSpeedBonus.get())),
                         OlympusTooltip.property("nether_mobs_ignore", "✓")
                 ));
 
@@ -78,7 +81,11 @@ public class HelmetOfHadesItem extends Item implements ICurioItem {
     }
 
     public static boolean isEquipped(final ServerPlayer player) {
-        return CuriosApi.getCuriosInventory(player)
+        return isEquipped((LivingEntity) player);
+    }
+
+    public static boolean isEquipped(final LivingEntity entity) {
+        return CuriosApi.getCuriosInventory(entity)
                 .flatMap(handler -> handler.findFirstCurio(OlympusItems.HELMET_OF_HADES.get()))
                 .isPresent();
     }
