@@ -140,9 +140,6 @@ public final class AresHelmetItem extends Item implements ICurioItem {
         if (!player.onGround()) {
             LAUNCH_LEFT_GROUND.add(playerId);
         }
-        else if (LAUNCH_LEFT_GROUND.remove(playerId)) {
-            LAUNCH_FALL_PROTECTION.remove(playerId);
-        }
     }
 
     public static void clearLaunchFallProtection(final ServerPlayer player) {

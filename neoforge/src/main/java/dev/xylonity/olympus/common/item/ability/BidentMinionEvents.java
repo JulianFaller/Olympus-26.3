@@ -5,6 +5,7 @@ import dev.xylonity.olympus.Olympus;
 import dev.xylonity.olympus.common.entity.CerberusEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
@@ -22,7 +23,8 @@ public final class BidentMinionEvents {
         if (!(event.getEntity() instanceof Mob deadMob)) return;
         if (deadMob instanceof CerberusEntity) return;
         if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
-        if (!event.getSource().getWeaponItem().is(OlympusItems.HADES_BIDENT.get())) return;
+        final ItemStack weapon = event.getSource().getWeaponItem();
+        if (weapon == null || !weapon.is(OlympusItems.HADES_BIDENT.get())) return;
         BidentMinionAbility.recordKill(player, deadMob);
     }
 

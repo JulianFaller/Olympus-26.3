@@ -341,15 +341,16 @@ public final class OlympusServerEvents {
             return;
         }
 
-        if (event.getEntity() instanceof ServerPlayer player && AresHelmetItem.hasLaunchFallProtection(player)) {
+        // If the spear of ares active ability is active, cancels the damage
+        if (event.getEntity() instanceof ServerPlayer player && SpearOfAresItem.handleSpecialLanding(player, event.getDistance())) {
             event.setCanceled(true);
             AresHelmetItem.clearLaunchFallProtection(player);
             return;
         }
 
-        // If the spear of ares active ability is active, cancels the damage
-        if (event.getEntity() instanceof ServerPlayer player && SpearOfAresItem.handleSpecialLanding(player, event.getDistance())) {
+        if (event.getEntity() instanceof ServerPlayer player && AresHelmetItem.hasLaunchFallProtection(player)) {
             event.setCanceled(true);
+            AresHelmetItem.clearLaunchFallProtection(player);
             return;
         }
 
@@ -433,13 +434,6 @@ public final class OlympusServerEvents {
             }
         }
 
-    }
-
-    @SubscribeEvent
-    public static void onPlayerTickPre(final PlayerTickEvent.Pre event) {
-        if (event.getEntity() instanceof ServerPlayer player && AresHelmetItem.hasLaunchFallProtection(player)) {
-            player.fallDistance = 0;
-        }
     }
 
     private static void maintainCrownEffect(final ServerPlayer player, final Holder<MobEffect> effect) {
