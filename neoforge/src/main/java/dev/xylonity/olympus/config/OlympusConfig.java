@@ -87,6 +87,9 @@ public final class OlympusConfig {
     public final ModConfigSpec.DoubleValue aresHelmetLaunchMaxUpwardBoost;
     public final ModConfigSpec.DoubleValue aresHelmetLaunchMinForwardBoost;
     public final ModConfigSpec.DoubleValue aresHelmetLaunchMaxForwardBoost;
+    public final ModConfigSpec.DoubleValue aresShieldStrengthSeconds;
+    public final ModConfigSpec.IntValue aresShieldStrengthLevel;
+    public final ModConfigSpec.DoubleValue aresShieldTotemHealth;
 
     public final ModConfigSpec.DoubleValue aresSpearAttackDamageBonus;
     public final ModConfigSpec.DoubleValue aresSpearProjectileDamage;
@@ -278,6 +281,9 @@ public final class OlympusConfig {
         aresHelmetLaunchMaxUpwardBoost = builder.defineInRange("launchMaxUpwardBoost", 1.7D, 0.0D, 100.0D);
         aresHelmetLaunchMinForwardBoost = builder.defineInRange("launchMinForwardBoost", 0.55D, 0.0D, 100.0D);
         aresHelmetLaunchMaxForwardBoost = builder.defineInRange("launchMaxForwardBoost", 1.1D, 0.0D, 100.0D);
+        aresShieldStrengthSeconds = builder.defineInRange("shieldStrengthSeconds", 10.0D, 0.0D, 3600.0D);
+        aresShieldStrengthLevel = builder.defineInRange("shieldStrengthLevel", 2, 1, 255);
+        aresShieldTotemHealth = builder.defineInRange("shieldTotemHealth", 6.0D, 0.5D, 1000.0D);
         builder.pop();
 
         builder.push("spearOfAres");

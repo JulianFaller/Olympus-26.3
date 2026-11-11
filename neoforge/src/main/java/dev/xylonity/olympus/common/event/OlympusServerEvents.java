@@ -6,6 +6,7 @@ import dev.xylonity.olympus.common.entity.HarpyEntity;
 import dev.xylonity.olympus.common.util.ArtemisArrow;
 import dev.xylonity.olympus.common.item.BracersOfZeusItem;
 import dev.xylonity.olympus.common.item.AresHelmetItem;
+import dev.xylonity.olympus.common.item.AresShieldItem;
 import dev.xylonity.olympus.common.item.AmuletOfHadesItem;
 import dev.xylonity.olympus.common.item.HelmetOfHadesItem;
 import dev.xylonity.olympus.common.item.HermesSandalsItem;
@@ -52,6 +53,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
+import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
@@ -60,7 +62,9 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
+import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.event.enchanting.EnchantedEntityLootEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -75,6 +79,20 @@ import java.util.Map;
 public final class OlympusServerEvents {
     private static final TagKey<Item> KEEP_ON_DEATH = TagKey.create(Registries.ITEM, Olympus.of("keep_on_death"));
     private static final Map<java.util.UUID, List<ItemStack>> KEPT_ITEMS = new HashMap<>();
+
+    @SubscribeEvent
+    public static void onAresShieldAnvilRepair(final AnvilUpdateEvent event) {
+        if (!event.getLeft().is(OlympusItems.ARES_SHIELD.get())
+                || !event.getRight().is(net.minecraft.world.item.Items.GOLD_BLOCK)
+                || event.getOutput().isEmpty()) {
+            return;
+        }
+
+        final ItemStack output = event.getOutput();
+        output.remove(net.minecraft.core.component.DataComponents.REPAIR_COST);
+        event.setOutput(output);
+        event.setXpCost(0);
+    }
 
     @SubscribeEvent
     public static void onPlayerChangedDimension(final PlayerEvent.PlayerChangedDimensionEvent event) {
@@ -198,6 +216,40 @@ public final class OlympusServerEvents {
 
     }
 
+    @SubscribeEvent
+    public static void onAresShieldBlock(final LivingShieldBlockEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)
+                || !event.getOriginalBlock()
+                || !player.getItemBlockingWith().is(OlympusItems.ARES_SHIELD.get())) {
+            return;
+        }
+
+        // Ares' shield never loses durability from ordinary blocking.
+        event.setShieldDamage(0);
+        if (event.getBlockedDamage() > 0.0F) {
+            final int strengthTicks = OlympusConfig.secondsToTicks(OlympusConfig.INSTANCE.aresShieldStrengthSeconds.get());
+            if (strengthTicks > 0) {
+                player.addEffect(new MobEffectInstance(
+                        MobEffects.STRENGTH,
+                        strengthTicks,
+                        OlympusConfig.INSTANCE.aresShieldStrengthLevel.get() - 1,
+                        false,
+                        true,
+                        true
+                ));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onAresShieldKnockBack(final LivingKnockBackEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player
+                && player.isBlocking()
+                && player.getItemBlockingWith().is(OlympusItems.ARES_SHIELD.get())) {
+            event.setCanceled(true);
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingDamagePre(final LivingDamageEvent.Pre event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
@@ -215,7 +267,9 @@ public final class OlympusServerEvents {
         }
 
         // Prevents the player from dying on a mortal hit if the helmet or the cup are present
-        if (HelmetOfHadesItem.tryActivateAbility(player) || PersephoneCupItem.tryActivateAbility(player)) {
+        if (AresShieldItem.tryActivateTotem(player)
+                || HelmetOfHadesItem.tryActivateAbility(player)
+                || PersephoneCupItem.tryActivateAbility(player)) {
             event.setNewDamage(0);
         }
     }

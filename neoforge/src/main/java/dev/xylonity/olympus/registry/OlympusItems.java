@@ -6,6 +6,7 @@ import dev.xylonity.olympus.common.item.ArtemisBowItem;
 import dev.xylonity.olympus.common.item.AphroditeLyreItem;
 import dev.xylonity.olympus.common.item.HelmetOfHadesItem;
 import dev.xylonity.olympus.common.item.AresHelmetItem;
+import dev.xylonity.olympus.common.item.AresShieldItem;
 import dev.xylonity.olympus.common.item.HermesSandalsItem;
 import dev.xylonity.olympus.common.item.InstrumentsOfHephaestusItem;
 import dev.xylonity.olympus.common.item.PersephoneCupItem;
@@ -19,7 +20,9 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
@@ -44,6 +47,21 @@ public class OlympusItems {
     public static final DeferredItem<HelmetOfHadesItem> HELMET_OF_HADES = ITEMS.registerItem("helmet_of_hades", HelmetOfHadesItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
     public static final DeferredItem<AmuletOfHadesItem> AMULET_OF_HADES = ITEMS.registerItem("amulet_of_hades", AmuletOfHadesItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
     public static final DeferredItem<AresHelmetItem> ARES_HELMET = ITEMS.registerItem("ares_helmet", AresHelmetItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
+    public static final DeferredItem<AresShieldItem> ARES_SHIELD = ITEMS.registerItem("ares_shield", AresShieldItem::new, properties -> properties
+            .rarity(Rarity.EPIC)
+            .durability(336)
+            .repairable(Items.GOLD_BLOCK)
+            .equippableUnswappable(EquipmentSlot.OFFHAND)
+            .delayedComponent(DataComponents.BLOCKS_ATTACKS, provider -> new BlocksAttacks(
+                    0.25F,
+                    1.0F,
+                    java.util.List.of(new BlocksAttacks.DamageReduction(90.0F, java.util.Optional.empty(), 0.0F, 1.0F)),
+                    new BlocksAttacks.ItemDamageFunction(3.0F, 1.0F, 1.0F),
+                    java.util.Optional.of(provider.getOrThrow(DamageTypeTags.BYPASSES_SHIELD)),
+                    java.util.Optional.of(SoundEvents.SHIELD_BLOCK),
+                    java.util.Optional.of(SoundEvents.SHIELD_BREAK)
+            ))
+            .component(DataComponents.BREAK_SOUND, SoundEvents.SHIELD_BREAK));
     public static final DeferredItem<PoseidonCrownItem> POSEIDON_CROWN = ITEMS.registerItem("poseidon_crown", PoseidonCrownItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
     public static final DeferredItem<HermesSandalsItem> HERMES_SANDALS = ITEMS.registerItem("hermes_sandals", HermesSandalsItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));
     public static final DeferredItem<InstrumentsOfHephaestusItem> INSTRUMENTS_OF_HEPHAESTUS = ITEMS.registerItem("instruments_of_hephaestus", InstrumentsOfHephaestusItem::new, properties -> properties.stacksTo(1).rarity(Rarity.EPIC));

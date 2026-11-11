@@ -1,0 +1,15 @@
+{
+  "parent": "olympus:item/ares_shield",
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [0, 180, 5],
+      "translation": [-10, 1.75, -10],
+      "scale": [1.25, 1.25, 1.25]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 180, 5],
+      "translation": [10, 0, -10],
+      "scale": [1.25, 1.25, 1.25]
+    }
+  }
+}

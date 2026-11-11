@@ -24,7 +24,7 @@ Use Java 25 and the checked-in Gradle 9.2.0 wrapper. Run from the repository roo
 
 ## Coding Style & Naming Conventions
 
-Use four-space indentation and same-line opening braces. Follow existing `dev.xylonity.olympus` packages, `PascalCase` types, `lowerCamelCase` methods/fields, and `UPPER_SNAKE_CASE` constants. Resource names use `lower_snake_case`, such as `harpy_spawn_egg`. Keep client-only code in `client/`. No formatter or linter is configured; match nearby code and honor `.gitattributes` line endings.
+Use four-space indentation and same-line opening braces. Follow existing `dev.xylonity.olympus` packages, `PascalCase` types, `lowerCamelCase` methods/fields, and `UPPER_SNAKE_CASE` constants. Resource names use `lower_snake_case`, such as `harpy_spawn_egg`. Keep client-only code in `client/`. No formatter or linter is configured; match nearby code and honor `.gitattributes` line endings. New Items and abilities should be configurated via the toml file in `neoforge/runs/client/config/olympus-server.toml`.
 
 ## Testing Guidelines
 

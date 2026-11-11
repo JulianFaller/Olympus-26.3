@@ -1,0 +1,139 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "NeoForge Client (:neoforge)",
+      "presentation": {
+        "group": "Mod Development - neoforge",
+        "order": 0
+      },
+      "projectName": "neoforge",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/clientRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dolympus%%/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/bin/main"
+      ],
+      "cwd": "${workspaceFolder}/neoforge/runs/client",
+      "env": {
+        "XDG_SESSION_TYPE": "x11"
+      },
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "NeoForge ClientTest (:neoforge)",
+      "presentation": {
+        "group": "Mod Development - neoforge",
+        "order": 1
+      },
+      "projectName": "neoforge",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/clientTestRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/clientTestRunVmArgs.txt",
+        "-Dfml.modFolders\u003dolympus%%/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/bin/main:olympus_tests%%/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/bin/gameTest"
+      ],
+      "cwd": "${workspaceFolder}/neoforge/runs/client-test",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "NeoForge Data (:neoforge)",
+      "presentation": {
+        "group": "Mod Development - neoforge",
+        "order": 2
+      },
+      "projectName": "neoforge",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/dataRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/dataRunVmArgs.txt",
+        "-Dfml.modFolders\u003dolympus%%/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/bin/main"
+      ],
+      "cwd": "${workspaceFolder}/neoforge/runs/data",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "NeoForge GameTestServer (:neoforge)",
+      "presentation": {
+        "group": "Mod Development - neoforge",
+        "order": 3
+      },
+      "projectName": "neoforge",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/gameTestServerRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/gameTestServerRunVmArgs.txt",
+        "-Dfml.modFolders\u003dolympus%%/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/bin/main:olympus_tests%%/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/bin/gameTest"
+      ],
+      "cwd": "${workspaceFolder}/neoforge/runs/gametest",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "NeoForge Server (:neoforge)",
+      "presentation": {
+        "group": "Mod Development - neoforge",
+        "order": 4
+      },
+      "projectName": "neoforge",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/serverRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003dolympus%%/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/bin/main"
+      ],
+      "cwd": "${workspaceFolder}/neoforge/runs/server",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "NeoForge ServerSmoke (:neoforge)",
+      "presentation": {
+        "group": "Mod Development - neoforge",
+        "order": 5
+      },
+      "projectName": "neoforge",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/serverSmokeRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/build/moddev/serverSmokeRunVmArgs.txt",
+        "-Dfml.modFolders\u003dolympus%%/Users/julianfaller/Documents/GitHub/Olympus-26.3/neoforge/bin/main"
+      ],
+      "cwd": "${workspaceFolder}/neoforge/runs/server-smoke",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    }
+  ]
+}
